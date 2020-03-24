@@ -1,8 +1,5 @@
 const Inventory = require('../helpers/inventory');
 
-const IMAGE_BASE_URL = '/images/inventory/';
-const CATEGORY_URL = '/images/category/';
-
 /**
  * Add items to inventory
  */
@@ -127,7 +124,7 @@ const getItemById = async (req, res, next) => {
             status: 'success',
             data: {
                 item,
-                base_url: IMAGE_BASE_URL
+                base_url: process.env.IMAGE_BASE_URL
             }
         });
 
@@ -177,35 +174,12 @@ const search = async (req, res, next) => {
         next(err);
     }
 
-    /***
-     * =======================
-     * Set Pagination data
-     * =======================
-     */
-
-
-    // if current page is 1, prev_page = null
-    const prev_page = (page > 1) ?
-        `/api/inventory/items?search=${ options.search || '' }&` + 
-        `page=${page - 1}&` +
-        `per_page=${per_page}}` : null;
-
-
-    // if current page is last page, next_page = null
-    const next_page = page < Math.ceil(result.total/per_page) ?
-        `/api/inventory/items?search=${ options.search || '' }&` +
-        `page=${page + 1}&` +
-        `per_page=${per_page}` : null
-
-
     // combine result with extra properties.
     Object.assign(result, {
         total_pages: Math.ceil(result.total/per_page),
         per_page: per_page,
         current_page: page,
-        prev_page,
-        next_page,
-        base_url: IMAGE_BASE_URL
+        base_url: process.env.IMAGE_BASE_URL
     });
 
 
@@ -234,7 +208,7 @@ const getCategories = async (req, res, next) => {
             data: {
                 categories,
                 count: categories.length,
-                base_url: CATEGORY_URL
+                base_url: process.env.CATEGORY_URL
             }
         })
 
@@ -264,7 +238,7 @@ const getSubCategories = async (req, res, next) => {
             data: {
                 sub_categories,
                 count: sub_categories.length,
-                base_url: CATEGORY_URL
+                base_url: process.env.CATEGORY_URL
             }
         })
 
@@ -294,7 +268,7 @@ const getSubSubCategories = async (req, res, next) => {
             data: {
                 sub_sub_categories,
                 count: sub_sub_categories.length,
-                base_url: CATEGORY_URL
+                base_url: process.env.CATEGORY_URL
             }
         })
 
@@ -320,7 +294,7 @@ const getAllCategories = async (req, res, next) => {
             status: 'success',
             data: {
                 categories,
-                base_url: CATEGORY_URL
+                base_url: process.env.CATEGORY_URL
             }
         })
 
@@ -397,41 +371,13 @@ const getItemsByCategory = async (req, res, next) => {
         next(err);
     }
 
-    /***
-     * =======================
-     * Set Pagination data
-     * =======================
-     */
-
-
-    // if current page is 1, prev_page = null
-    const prev_page = (page > 1) ?
-        `/api/inventory/items?search=${ options.search || '' }&` + 
-        `brand=${ options.brand_id || '' }&` +
-        `category=${options.category_id || '' }&` +
-        `page=${page - 1}&` +
-        `per_page=${per_page}}` : null;
-
-
-    // if current page is last page, next_page = null
-    const next_page = page < Math.ceil(result.total/per_page) ?
-        `/api/inventory/items?search=${ options.search || '' }&` +
-        `brand=${ options.brand_id || '' }&` +
-        `category=${options.category_id || '' }&` +
-        `page=${page + 1}&` +
-        `per_page=${per_page}` : null
-
-
     // combine result with extra properties.
     Object.assign(result, {
         total_pages: Math.ceil(result.total/per_page),
         per_page: per_page,
         current_page: page,
-        prev_page,
-        next_page,
-        base_url: IMAGE_BASE_URL
+        base_url: process.env.IMAGE_BASE_URL
     });
-
 
     res.json({
         status: 'success',
@@ -478,32 +424,12 @@ const getAllItems = async (req, res, next) => {
             next(err);
         }
 
-        /***
-         * =======================
-         * Set Pagination data
-         * =======================
-         */
-
-
-        // if current page is 1, prev_page = null
-        const prev_page = (page > 1) ?
-            `/api/inventory/items/all?page=${page - 1}&` +
-            `per_page=${per_page}}` : null;
-
-
-        // if current page is last page, next_page = null
-        const next_page = page < Math.ceil(result.total/per_page) ?
-            `/api/inventory/items/all?page=${page + 1}&` +
-            `per_page=${per_page}}` : null;
-
         // combine result with extra properties.
         Object.assign(result, {
             total_pages: Math.ceil(result.total/per_page),
             per_page: per_page,
             current_page: page,
-            prev_page,
-            next_page,
-            base_url: IMAGE_BASE_URL
+            base_url: process.env.IMAGE_BASE_URL
         });
 
 
@@ -579,7 +505,7 @@ const getItemsByOfferID = async (req, res, next) => {
             total_pages: Math.ceil(items.count/per_page),
             per_page: per_page,
             current_page: page,
-            base_url: IMAGE_BASE_URL
+            base_url: process.env.IMAGE_BASE_URL
         });
 
         res.json({
@@ -625,7 +551,7 @@ const getRandomItems = async (req, res, next) => {
         Object.assign(result, {
             total_pages: Math.ceil(result.total/per_page),
             per_page: per_page,
-            base_url: IMAGE_BASE_URL
+            base_url: process.env.IMAGE_BASE_URL
         });
 
         res.json({
