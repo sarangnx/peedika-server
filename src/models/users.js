@@ -94,18 +94,6 @@ module.exports = (sequelize, DataTypes) => {
             as: 'store'
         });
 
-        // Each user has a profile.
-        users.hasOne(models.user_details, {
-            foreignKey: 'user_id', // target table
-            as: 'user_profile'
-        });
-
-        // Each owner has a profile.
-        users.hasOne(models.owner_details, {
-            foreignKey: 'owner_id', // target table
-            as: 'owner_profile'
-        });
-
         // Associate with cart without any foreign key constraint.
         users.hasMany(models.cart, {
             foreignKey: 'user_id',
