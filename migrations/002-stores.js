@@ -8,28 +8,41 @@ module.exports = {
                 autoIncrement : true,
                 allowNull: false
             },
-            address: {
-                type: Sequelize.JSON,
-                allowNull: true
-            },
             name: {
                 type: Sequelize.STRING(225),
                 allowNull: false,
+            },
+            area: {
+                // area or locality
+                type: Sequelize.STRING(100),
+                allowNull: true,
+            },
+            city: {
+                type: Sequelize.STRING(100),
+                allowNull: true,
+            },
+            district: {
+                type: Sequelize.STRING(100),
+                allowNull: true,
+            },
+            state: {
+                type: Sequelize.STRING(100),
+                allowNull: true,
+            },
+            pincode: {
+                type: Sequelize.STRING(10),
+                allowNull: true,
+            },
+            ward: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
             },
             phone: {
                 type: Sequelize.STRING(15),
                 allowNull: true
             },
-            gst: {
-                type: Sequelize.STRING(20),
-                allowNull: true
-            },
             email: {
                 type: Sequelize.STRING(100),
-                allowNull: true
-            },
-            rating: {
-                type: Sequelize.REAL(2,1),
                 allowNull: true
             },
             opening_time: {
