@@ -22,24 +22,53 @@ module.exports = {
                 type: Sequelize.STRING(255),
                 allowNull: true
             },
-            /**
-             * Possible values:
-             *  - users [group: users]
-             *  - owner [group: store]
-             *  - salesman [group: store]
-             */
+            name: {
+                type: Sequelize.STRING(100),
+                allowNull: true
+            },
+            house: {
+                type: Sequelize.STRING(100),
+                allowNull: true
+            },
+            ward: {
+                type: Sequelize.INTEGER,
+                allowNull: true
+            },
+            area: {
+                type: Sequelize.STRING(100),
+                allowNull: true
+            },
+            landmark: {
+                type: Sequelize.STRING(100),
+                allowNull: true
+            },
+            district: {
+                type: Sequelize.STRING(50),
+                allowNull: true
+            },
+            pincode: {
+                type: Sequelize.STRING(10),
+                allowNull: true
+            },
+            verified: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
             roles: {
                 type: Sequelize.JSON,
                 allowNull: true
             },
-            /**
-             * Possible values:
-             *  - users
-             *  - store
-             */
             usergroup: {
-                type: Sequelize.STRING(20),
-                allowNull: true
+                type: Sequelize.ENUM,
+                allowNull: true,
+                values: [
+                    'superadmin',
+                    'admin',
+                    'user',
+                    'storeowner',
+                    'delivery',
+                ]
             },
             createdAt: {
                 allowNull: false,

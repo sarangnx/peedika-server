@@ -1,6 +1,5 @@
 const Users = require('../models').users;
 const Codes = require('../models').codes;
-const UserDetails = require('../models').user_details;
 const Utils = require('./utils');
 const { sequelize, Sequelize } = require('../models')
 
@@ -26,11 +25,10 @@ const registerUser = async (userdata, options) => {
     try {
         transaction = await sequelize.transaction();
         const user = await Users.create(options,{ transaction });
-        await UserDetails.create({
-            user_id: user.user_id
-        },{ transaction });
 
         await transaction.commit();
+
+        return user;
     } catch(err) {
 
         // If a transaction is started, Rollback

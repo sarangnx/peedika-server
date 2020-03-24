@@ -24,13 +24,53 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(255),
             allowNull: true
         },
+        name: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+        },
+        house: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+        },
+        ward: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        area: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+        },
+        landmark: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+        },
+        district: {
+            type: DataTypes.STRING(50),
+            allowNull: true
+        },
+        pincode: {
+            type: DataTypes.STRING(10),
+            allowNull: true
+        },
+        verified: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
         roles: {
             type: DataTypes.JSON,
             allowNull: true
         },
         usergroup: {
-            type: DataTypes.STRING(20),
-            allowNull: true
+            type: DataTypes.ENUM,
+            allowNull: true,
+            values: [
+                'superadmin',
+                'admin',
+                'user',
+                'storeowner',
+                'delivery',
+            ]
         },
         blocked: {
             type: DataTypes.BOOLEAN,
@@ -52,18 +92,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'store_owner_id',
             timestamps: false,
             as: 'store'
-        });
-
-        // Each user has a profile.
-        users.hasOne(models.user_details, {
-            foreignKey: 'user_id', // target table
-            as: 'user_profile'
-        });
-
-        // Each owner has a profile.
-        users.hasOne(models.owner_details, {
-            foreignKey: 'owner_id', // target table
-            as: 'owner_profile'
         });
 
         // Associate with cart without any foreign key constraint.
