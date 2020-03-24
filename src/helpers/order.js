@@ -6,7 +6,6 @@ const OrderDetails = require('../models').order_details;
 const Inventory = require('../models').inventory;
 const Stocks = require('../models').stocks;
 const Users = require('../models').users;
-const UserDetails = require('../models').user_details;
 const Sequelize = require('../models').Sequelize;
 const sequelize = require('../models').sequelize;
 
@@ -17,7 +16,7 @@ const Utils = require('./utils');
  * Place order for any quantity of a single item.
  * This method is invoked when user clicks Buy Now
  * button of an item/product.
- * 
+ *
  * @param {Object} data - Details of order.
  * @param {Number} data.user_id - User ID.
  * @param {Number} data.store_id - Store ID.
@@ -64,23 +63,21 @@ const placeOrder = async (data) => {
 
         // If delivery address is empty, copy address from profile.
         if( _.isEmpty(data.delivery_address) ){
-            const userdetails = await UserDetails.findOne({
-                where: {
-                    user_id: data.user_id
-                }
-            });
-
             const user = await Users.findOne({
                 where: {
                     user_id: data.user_id
                 }
             });
 
-            data.delivery_address = userdetails.address;
-            data.delivery_address = Object.assign({},data.delivery_address, {
-                phone: user.phone
-            });
- 
+            data.delivery_address = _.pick(user, [
+                'house',
+                'ward',
+                'area',
+                'landmark',
+                'district',
+                'pincode',
+                'phone'
+            ]);
         }
 
         // generate invoice number
@@ -175,7 +172,7 @@ const placeOrder = async (data) => {
 
         // commit the transaction to the database.
         await transaction.commit();
-        
+
         let time = Utils.timeString();
         let date = Utils.dateString();
         const message = `A new order has arrived at ${time} ${date}`;
@@ -202,7 +199,7 @@ module.exports.placeOrder = placeOrder;
  * Create an entry in the orders table.
  * This method is used to make bulk checkout.
  * That is, include numerous items in a single order.
- * 
+ *
  * @param {Object} data - Details of order.
  * @param {Number} data.user_id - User ID.
  * @param {Number} data.store_id - Store ID.
@@ -215,7 +212,7 @@ module.exports.placeOrder = placeOrder;
  * @param {String} data.pincode - Pincode
  * @param {String} data.landmark - Landmark
  * @param {String} data.phone - Phone Number
- * 
+ *
  * @returns {Number} store_id
  */
 const createOrder = async (data, transaction) => {
@@ -235,22 +232,21 @@ const createOrder = async (data, transaction) => {
 
         // If delivery address is empty, copy address from profile.
         if( _.isEmpty(data.delivery_address) ){
-            const userdetails = await UserDetails.findOne({
-                where: {
-                    user_id: data.user_id
-                }
-            });
-
             const user = await Users.findOne({
                 where: {
                     user_id: data.user_id
                 }
             });
 
-            data.delivery_address = userdetails.address;
-            data.delivery_address = Object.assign({},data.delivery_address, {
-                phone: user.phone
-            });
+            data.delivery_address = _.pick(user, [
+                'house',
+                'ward',
+                'area',
+                'landmark',
+                'district',
+                'pincode',
+                'phone'
+            ]);
         }
 
         // generate invoice number
@@ -263,7 +259,7 @@ const createOrder = async (data, transaction) => {
         const order = await Orders.create(data, { transaction });
 
         return order.order_id;
-        
+
     } catch(err) {
         throw err;
     }
@@ -276,7 +272,7 @@ module.exports.createOrder = createOrder;
 /**
  * Add items to an order.
  * Used with createOrder method.
- * 
+ *
  * @param {Object} data - Item details.
  * @param {Number} data.order_id - Order ID. returned from createOrder().
  * @param {Number} data.item_id - Item ID.
@@ -362,7 +358,7 @@ module.exports.status = status;
  *  - by User ID - Orders of a user.
  *  - by Store ID - Orders given to a store.
  * Only one of the any three arguments must be used.
- * 
+ *
  * @param {Object} options
  * @param {Number} options.order_id - Order ID
  * @param {Number} options.user_id - user ID
@@ -377,7 +373,7 @@ const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, 
     try {
 
         let where, sort;
-        
+
         // select any one of the three arguments.
         if( order_id ){
             where = {
@@ -426,19 +422,16 @@ const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, 
             },{
                 model: Users,
                 as: 'user',
-                attributes: [
-                    'user_id',
-                    'phone',
-                    'email'
-                ],
-                include: [{
-                    model: UserDetails,
-                    as: 'user_profile',
-                    attributes: [
-                        'name',
-                        'address'
+                attributes: {
+                    exclude: [
+                        'roles',
+                        'usergroup',
+                        'password',
+                        'createdAt',
+                        'updatedAt',
+                        'deletedAt',
                     ]
-                }]
+                },
             }],
             offset,
             limit
@@ -494,7 +487,7 @@ module.exports.viewOrder = viewOrder;
 
 /**
  * Cancel an order, and set status to cancelled.
- * 
+ *
  * @param {Number} order_id - Order ID
  */
 const cancelOrder = async (order_id) => {
@@ -600,7 +593,7 @@ module.exports.changeStatus = changeStatus;
 
 /**
  * Get stats like number of orders, orders per day etc..
- * 
+ *
  * @param {Number} store_id - Store ID.
  */
 const getStats = async(store_id) => {
