@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const Umzug = require('umzug');
 const path = require('path');
-const logger = require('../src/helpers/winston.js');
+const logger = require('../src/middleware/winston.js');
 
 // Initialize config
 require('../config');
