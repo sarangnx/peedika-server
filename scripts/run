@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 
-const migrate = require('./migrate');
 const yargs = require('yargs');
+const migrate = require('./migrate.js');
+const logger = require('../src/components/helpers/winston.js');
 
+/* eslint-disable */
 yargs.command({
     command: 'migrate',
     usage:'$0 migrate',
     describe: 'Migrate Database.',
     handler: argv => {
+        logger.info('Running migrations 🏃‍');
         migrate.migrate().then(() => {
+            logger.info('Migrations complete ✔️');
             process.exit();
         }).catch((err) => {
-            console.error(err);
+            logger.error(err);
             process.exit();
         });
     }
@@ -20,10 +24,12 @@ yargs.command({
     usage:'$0 migrate:undo',
     describe: 'Undo last Migration.',
     handler: argv => {
+        logger.info('Undoing last migration ↩️');
         migrate.migrateUndo().then(() => {
+            logger.info('complete ✔️');
             process.exit();
         }).catch((err) => {
-            console.error(err);
+            logger.error(err);
             process.exit();
         });
     }
@@ -32,10 +38,12 @@ yargs.command({
     usage:'$0 migrate:undo:all',
     describe: 'Undo all Migrations.',
     handler: argv => {
+        logger.info('Undoing all migrations ↩️');
         migrate.migrateUndoAll().then(() => {
+            logger.info('complete ✔️');
             process.exit();
         }).catch((err) => {
-            console.error(err);
+            logger.error(err);
             process.exit();
         });
     }
@@ -44,10 +52,12 @@ yargs.command({
     usage:'$0 seed',
     describe: 'Seed Database.',
     handler: argv => {
+        logger.info('Running seeds 🏃‍');
         migrate.seed().then(() => {
+            logger.info('Seeding complete ✔️');
             process.exit();
         }).catch((err) => {
-            console.error(err);
+            logger.error(err);
             process.exit();
         });
     }
@@ -56,10 +66,12 @@ yargs.command({
     usage:'$0 seed:undo',
     describe: 'Undo last Seed.',
     handler: argv => {
+        logger.info('Undoing last seed ↩️');
         migrate.seedUndo().then(() => {
+            logger.info('complete ✔️');
             process.exit();
         }).catch((err) => {
-            console.error(err);
+            logger.error(err);
             process.exit();
         });
     }
@@ -68,10 +80,12 @@ yargs.command({
     usage:'$0 seed:undo:all',
     describe: 'Undo all seeds.',
     handler: argv => {
+        logger.info('Undoing all seeds ↩️');
         migrate.seedUndoAll().then(() => {
+            logger.info('complete ✔️');
             process.exit();
         }).catch((err) => {
-            console.error(err);
+            logger.error(err);
             process.exit();
         });
     }
