@@ -23,8 +23,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Initialize Environment variables.
-require('dotenv').config({ path: path.join(__dirname, '..','.env') });
+// Initialize config
+require('../config');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

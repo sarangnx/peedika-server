@@ -4,7 +4,7 @@ const path = require('path');
 const logger = require('../src/helpers/winston.js');
 
 // Initialize config
-require('../config/index.js');
+require('../config');
 
 // Create a connection to mysql.
 const sequelize = new Sequelize(
