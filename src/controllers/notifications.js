@@ -9,7 +9,6 @@ const Notifications = require('../helpers/notifications');
  */
 const send = async (data, req, res, next) => {
     try{
-
         const data = req.body;
 
         await Notifications.send(data);
@@ -18,7 +17,6 @@ const send = async (data, req, res, next) => {
             status: 'success',
             message: 'Notifications sent successfully!'
         });
-
     } catch(err) {
         next(err);
     }
