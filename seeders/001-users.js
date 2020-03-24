@@ -13,7 +13,12 @@ module.exports = {
             phone: '8086451278',
             password: hashPassword('sarang123'),
             usergroup: 'superadmin'
-        }],{})
+        },{
+            user_id: 2,
+            email: 'owner@gmail.com',
+            password: hashPassword('sarang123'),
+            usergroup: 'storeowner'
+        }],{});
     },
 
     down: (queryInterface, Sequelize) => {
