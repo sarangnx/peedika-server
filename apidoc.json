@@ -1,0 +1,7 @@
+{
+    "name": "Peedia2.0",
+    "version": "1.0.0",
+    "description": "An online ecommerce platform.",
+    "title": "Peedia Server",
+    "url" : "http://localhost:3000/api"
+}
