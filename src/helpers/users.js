@@ -1,5 +1,4 @@
 const Users = require('../models').users;
-const UserDetails = require('../models').user_details;
 const Utils = require('./utils');
 
 
@@ -9,24 +8,11 @@ const Utils = require('./utils');
  * @param {Number} user_id - User ID
  */
 const getUserProfile = async (user_id) => {
-
     try {
-
         const user = await Users.findOne({
             where: {
                 user_id
             },
-            include: [{
-                model: UserDetails,
-                as: 'user_profile',
-                attributes: {
-                    exclude: [
-                        'verification_code',
-                        'createdAt',
-                        'updatedAt',
-                    ]
-                }
-            }],
             attributes: {
                 exclude: [
                     'password',
@@ -36,13 +22,10 @@ const getUserProfile = async (user_id) => {
                 ]
             }
         });
-
         return user;
-
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.getUserProfile = getUserProfile;
@@ -54,35 +37,26 @@ module.exports.getUserProfile = getUserProfile;
  * @param {Object} data - User profile details.
  * @param {Number} data.user_id - User ID
  * @param {Number} data.name - User Name
- * @param {String} data.address1 - Address Line One
- * @param {String} data.address2 - Address Line Two
- * @param {String} data.address3 - Address Line Three
- * @param {String} data.city - City
+ * @param {String} data.house - House Name or Number
+ * @param {Number} data.ward - Ward Number
+ * @param {String} data.area - Area or locality
  * @param {String} data.district - District
- * @param {String} data.state - State
  * @param {String} data.pincode - pincode
  * @param {String} data.landmark - Landmark
  * @param {String} data.phone - Phone Number
  * @param {String} data.email - Email
  */
 const editUserProfile = async (data) => {
-
     try {
-
-        data.address = Utils.formatAddress(data);
-
-        await UserDetails.upsert(data,{
-            fields: [
-                'name',
-                'address'
-            ],
-            where: {
-                user_id: data.user_id
-            }
-        });
-
         await Users.update(data, {
             fields: [
+                'name',
+                'house',
+                'ward',
+                'area',
+                'district',
+                'pincode',
+                'landmark',
                 'email',
                 'phone'
             ],
@@ -90,11 +64,9 @@ const editUserProfile = async (data) => {
                 user_id: data.user_id
             }
         });
-
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.editUserProfile = editUserProfile;
@@ -105,24 +77,25 @@ module.exports.editUserProfile = editUserProfile;
  * 
  * @param {Object} data - User address.
  * @param {Number} data.user_id - User ID
- * @param {String} data.address1 - Address Line One
- * @param {String} data.address2 - Address Line Two
- * @param {String} data.address3 - Address Line Three
- * @param {String} data.city - City
+ * @param {String} data.house - House Name or Number
+ * @param {Number} data.ward - Ward Number
+ * @param {String} data.area - Area or locality
  * @param {String} data.district - District
- * @param {String} data.state - State
  * @param {String} data.pincode - pincode
  * @param {String} data.landmark - Landmark
  */
 const editUserAddress = async (data) => {
-
     try {
-
         data.address = Utils.formatAddress(data);
 
-        await UserDetails.upsert(data,{
+        await Users.update(data, {
             fields: [
-                'address'
+                'house',
+                'ward',
+                'area',
+                'district',
+                'pincode',
+                'landmark',
             ],
             where: {
                 user_id: data.user_id
@@ -132,7 +105,6 @@ const editUserAddress = async (data) => {
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.editUserAddress = editUserAddress;
@@ -144,27 +116,12 @@ module.exports.editUserAddress = editUserAddress;
  * @param {Number} limit - Number of items Per page.
  */
 const getUserProfiles = async (offset, limit) => {
-
     try {
-
         const users = await Users.findAndCountAll({
-            include: [{
-                model: UserDetails,
-                as: 'user_profile',
-                attributes: {
-                    exclude: [
-                        'user_id',
-                        'verification_code',
-                        'createdAt',
-                        'updatedAt',
-                    ]
-                }
-            }],
             attributes: {
                 exclude: [
                     'roles',
                     'usergroup',
-                    'password',
                     'password',
                     'createdAt',
                     'updatedAt',
@@ -176,11 +133,9 @@ const getUserProfiles = async (offset, limit) => {
         });
 
         return users;
-
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.getUserProfiles = getUserProfiles;
