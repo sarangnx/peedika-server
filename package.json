@@ -1,0 +1,34 @@
+{
+  "name": "peedia",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "./node_modules/.bin/nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "pm2": "pm2 start ./bin/www --name='peedia'"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "convert-units": "^2.3.4",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^8.6.0",
+    "multer": "^1.4.2",
+    "mysql2": "^1.6.5",
+    "nodemailer": "^6.3.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "sequelize": "^5.14.0",
+    "socket.io": "^2.3.0",
+    "yargs": "^13.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1",
+    "sequelize-cli": "^5.5.0",
+    "umzug": "^2.2.0"
+  }
+}

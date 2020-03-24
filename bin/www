@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+const app = require('../src/index').app;
+const server = require('../src/index').server;
+
+const CONFIG = require('../src/config/app');
+
+const port = CONFIG.port;
+app.set('port',port);
+
+server.listen(port);
+server.on('listening', () => {
+    console.log(`Server up and running on port : ${port}`);
+});

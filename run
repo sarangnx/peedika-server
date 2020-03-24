@@ -1,0 +1,78 @@
+#!/usr/bin/env node
+
+const migrate = require('./migrate');
+const yargs = require('yargs');
+
+yargs.command({
+    command: 'migrate',
+    usage:'$0 migrate',
+    describe: 'Migrate Database.',
+    handler: argv => {
+        migrate.migrate().then(() => {
+            process.exit();
+        }).catch((err) => {
+            console.error(err);
+            process.exit();
+        });
+    }
+}).command({
+    command: 'migrate:undo',
+    usage:'$0 migrate:undo',
+    describe: 'Undo last Migration.',
+    handler: argv => {
+        migrate.migrateUndo().then(() => {
+            process.exit();
+        }).catch((err) => {
+            console.error(err);
+            process.exit();
+        });
+    }
+}).command({
+    command: 'migrate:undo:all',
+    usage:'$0 migrate:undo:all',
+    describe: 'Undo all Migrations.',
+    handler: argv => {
+        migrate.migrateUndoAll().then(() => {
+            process.exit();
+        }).catch((err) => {
+            console.error(err);
+            process.exit();
+        });
+    }
+}).command({
+    command: 'seed',
+    usage:'$0 seed',
+    describe: 'Seed Database.',
+    handler: argv => {
+        migrate.seed().then(() => {
+            process.exit();
+        }).catch((err) => {
+            console.error(err);
+            process.exit();
+        });
+    }
+}).command({
+    command: 'seed:undo',
+    usage:'$0 seed:undo',
+    describe: 'Undo last Seed.',
+    handler: argv => {
+        migrate.seedUndo().then(() => {
+            process.exit();
+        }).catch((err) => {
+            console.error(err);
+            process.exit();
+        });
+    }
+}).command({
+    command: 'seed:undo:all',
+    usage:'$0 seed:undo:all',
+    describe: 'Undo all seeds.',
+    handler: argv => {
+        migrate.seedUndoAll().then(() => {
+            process.exit();
+        }).catch((err) => {
+            console.error(err);
+            process.exit();
+        });
+    }
+}).demandCommand(1, 'You must choose a command').argv;
