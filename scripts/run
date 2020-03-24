@@ -2,7 +2,7 @@
 
 const yargs = require('yargs');
 const migrate = require('./migrate.js');
-const logger = require('../src/components/helpers/winston.js');
+const logger = require('../src/middleware/winston.js');
 
 /* eslint-disable */
 yargs.command({
