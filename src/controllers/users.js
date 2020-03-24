@@ -1,13 +1,11 @@
 const Users = require('../helpers/users');
 
-
 /**
  * Get the profile of a user.
  *  
  * @param {Number} req.params.user_id;
  */
 const getUserProfile = async (data, req, res, next) => {
-
     try {
         const { user_id } = req.params;
 
@@ -19,11 +17,9 @@ const getUserProfile = async (data, req, res, next) => {
                 user
             }
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.getUserProfile = getUserProfile;
@@ -47,9 +43,7 @@ module.exports.getUserProfile = getUserProfile;
  * @param {String} req.body.email - Email
  */
 const editUserProfile = async (data, req, res, next) => {
-
     try {
-
         const userdata = req.body;
 
         await Users.editUserProfile(userdata);
@@ -58,11 +52,9 @@ const editUserProfile = async (data, req, res, next) => {
             status: 'success',
             message: 'User profile updated.',
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.editUserProfile = editUserProfile;
@@ -83,9 +75,7 @@ module.exports.editUserProfile = editUserProfile;
  * @param {String} req.body.landmark - Landmark
  */
 const editUserAddress = async (data, req, res, next) => {
-
     try {
-
         const userdata = req.body;
 
         await Users.editUserAddress(userdata);
@@ -94,11 +84,9 @@ const editUserAddress = async (data, req, res, next) => {
             status: 'success',
             message: 'User address updated.',
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.editUserAddress = editUserAddress;
@@ -110,9 +98,7 @@ module.exports.editUserAddress = editUserAddress;
  * @param {Number} req.query.per_page - Items per page
  */
 const getUserProfiles = async (data, req, res, next) => {
-
     try {
-
         const page = parseInt(req.query.page) || 1;
         const per_page = parseInt(req.query.per_page) || 20;
 
@@ -131,7 +117,6 @@ const getUserProfiles = async (data, req, res, next) => {
             status: 'success',
             data: result
         });
-
     } catch(err) {
         next(err);
     }
