@@ -24,13 +24,53 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(255),
             allowNull: true
         },
+        name: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+        },
+        house: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+        },
+        ward: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        area: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+        },
+        landmark: {
+            type: DataTypes.STRING(100),
+            allowNull: true
+        },
+        district: {
+            type: DataTypes.STRING(50),
+            allowNull: true
+        },
+        pincode: {
+            type: DataTypes.STRING(10),
+            allowNull: true
+        },
+        verified: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
         roles: {
             type: DataTypes.JSON,
             allowNull: true
         },
         usergroup: {
-            type: DataTypes.STRING(20),
-            allowNull: true
+            type: DataTypes.ENUM,
+            allowNull: true,
+            values: [
+                'superadmin',
+                'admin',
+                'user',
+                'storeowner',
+                'delivery',
+            ]
         },
         blocked: {
             type: DataTypes.BOOLEAN,
