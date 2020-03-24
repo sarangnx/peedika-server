@@ -10,6 +10,7 @@ const passport = require('passport');
 const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
+const ErrorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -83,16 +84,9 @@ app.use(function(req, res, next) {
     err.message = 'Requested URL Not Found';
     next(err);
 });
-  
-// error handler
-app.use(function(err, req, res, next) {
-    console.log(err);
-    res.status(err.status || 500);
-    res.json({
-        status:'failed',
-        message: err.message || 'An error occured',
-    });
-});
+
+// Error Handler Middleware
+app.use(ErrorHandler);
 
 module.exports.app = app;
 module.exports.server = server;
