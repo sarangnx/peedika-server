@@ -2,7 +2,6 @@ const _ = require('lodash');
 
 const Stores = require('../models').stores;
 const StoreOwners = require('../models').store_owners;
-const ownerDetails = require('../models').owner_details;
 const Users = require('../models').users;
 const Orders = require('../models').orders;
 const OrderDetails = require('../models').order_details;
@@ -14,7 +13,7 @@ const Utils = require('./utils');
 
 /**
  * Add store details to the database.
- *  
+ *
  * @param {Object} data - Store data
  */
 const addStoreDetails = (data) => {
@@ -34,57 +33,34 @@ module.exports.addStoreDetails = addStoreDetails;
 /**
  * Adds a new user in user table as owner, and add details
  * to ownerDetails table.
- * 
+ *
  * @param {Object} data - User details.
- * 
+ *
  * @returns {Number} - Returns user_id of the owner.
  */
 const addOwner = async (data) => {
 
     // Extract phone and email from data
-    const user = _.pick(data,[
+    const user = _.pick(data, [
         'email',
         'phone'
     ]);
 
     // Throw an error if both email and phone are not given.
-    if(!user.email && !user.phone){
+    if (!user.email && !user.phone) {
         return new Error('Email or Password Required');
     }
 
     // Add a stock  password.
     // Let the user change it later.
     user.password = 'password';
-    
-    // Add user role, and usergroup for owner
-    user.roles = ['owner'];
-    user.usergroup = 'store';
-    try {
 
-        // Create a user for owner, and use the user_id to
-        // create owner_details.
-        const { user_id } = await Users.create(user);
+    // Add usergroup for owner
+    user.usergroup = 'storeowner';
 
-        // combine address to a single json.
-        data.address = Utils.formatAddress(data);
+    const { user_id } = await Users.create(user);
 
-        // filter data and select relevant fields.
-        const userDetails = _.pick(data,[
-            'first_name',
-            'last_name',
-            'address',
-            'aadhar_no',
-        ]);
-
-        userDetails.owner_id = user_id;
-
-        // create a row in owner_details.
-        await ownerDetails.create(userDetails);
-        
-        return user_id;
-    } catch(err) {
-        return err;
-    }
+    return user_id;
 }
 
 module.exports.addOwner = addOwner;
@@ -93,7 +69,7 @@ module.exports.addOwner = addOwner;
 /**
  * Associate a store to an owner, by adding an entry
  * in store_owners table.
- * 
+ *
  * @param {Number} storeId - Store ID
  * @param {Number} ownerId - User ID of owner
  */
@@ -113,11 +89,11 @@ module.exports.addStoreOwner = addStoreOwner;
  * Edit the details of a store.
  * This method can be used to edit any or all of
  * the fields specified in the fields option.
- * 
+ *
  * @param {Object} data - Store Data
  */
 const editStoreDetails = (data) => {
-    
+
     data.address = Utils.formatAddress(data);
 
     return Stores.update(data, {
@@ -145,57 +121,26 @@ module.exports.editStoreDetails = editStoreDetails;
 
 /**
  * Edit the owner details/profile.
- * 
+ *
  * @param {Object} data - Owner details to be editted.
  */
 const editOwner = async (data) => {
-
-    // To change address, complete data
-    // need to be provided.
-    if(data.address1){
-        data.address = Utils.formatAddress(data);
-    }
-
-    // Extract email and phone from data.
-    const user = _.pick(data,[
-        'email',
-        'phone'
-    ]);
-
-    const owner = _.pick(data,[
-        'first_name',
-        'last_name',
-        'address',
-        'aadhaar_no'
-    ]);
-
-    try {
-        // update phone and email in users table.
-        await Users.update(user, {
-            fields: [
-                'email',
-                'phone'
-            ],
-            where: {
-                user_id: data.owner_id
-            }
-        });
-
-        await ownerDetails.update(owner,{
-            fields: [
-                'first_name',
-                'last_name',
-                'address',
-                'aadhaar_no'
-            ],
-            where: {
-                owner_id: data.owner_id
-            }
-        });
-    } catch(err) {
-        return err;
-    }
-    
+    await Users.update(data, {
+        fields: [
+            'name',
+            'house',
+            'ward',
+            'area',
+            'district',
+            'pincode',
+            'landmark',
+            'email',
+            'phone'
+        ],
+        where: {
+            user_id: data.owner_id
+        }
+    });
 }
 
 module.exports.editOwner = editOwner;
@@ -203,7 +148,7 @@ module.exports.editOwner = editOwner;
 
 /**
  * Get details of store using store ID.
- * 
+ *
  * @param {Number} storeid - Store ID
  */
 const getStoreDetails = (storeid) => {
@@ -227,20 +172,7 @@ const getStoreDetails = (storeid) => {
                 'email',
                 'phone',
             ],
-            // include Profile
-            include: [{
-                model: ownerDetails,
-                as: 'owner_profile',
-                attributes: {
-                    exclude: [
-                        'owner_id',
-                        'verification_code',
-                        'createdAt',
-                        'updatedAt'
-                    ]
-                }
-            }]
-        }]
+        }],
     });
 
 }
@@ -250,7 +182,7 @@ module.exports.getStoreDetails = getStoreDetails;
 
 /**
  * Get details of an owner using owner ID.
- * 
+ *
  * @param {Number} owner_id - Owner ID
  */
 const getOwnerDetails = (ownerid) => {
@@ -275,19 +207,7 @@ const getOwnerDetails = (ownerid) => {
                     'deletedAt'
                 ]
             },
-        },{
-            // Owner Profile
-            model: ownerDetails,
-            as: 'owner_profile',
-            attributes: {
-                exclude: [
-                    'owner_id',
-                    'verification_code',
-                    'createdAt',
-                    'updatedAt'
-                ]
-            }
-        }]
+        }],
     });
 
 }
@@ -309,14 +229,14 @@ module.exports.getStoreList = getStoreList;
 
 /**
  * Get stats for displaying in the dashboard.
- * 
+ *
  * @param {Number} store_id - Store ID
  */
 const dashBoard = async (store_id) => {
 
     try {
 
-        if( !store_id ){
+        if (!store_id) {
             throw new Error('Store ID required.');
         }
 
@@ -336,7 +256,7 @@ const dashBoard = async (store_id) => {
                 [Sequelize.fn('COUNT', Sequelize.col('order_details.item_id')), 'occurance']
             ],
             // GROUP BY 'item_id'
-            group: [ 'order_details.item_id' ],
+            group: ['order_details.item_id'],
             // ORDER BY 'occurance' DESC
             order: [
                 [Sequelize.col('occurance'), 'DESC']
@@ -354,11 +274,11 @@ const dashBoard = async (store_id) => {
             most_sold_items
         }
 
-    } catch(err) {
+    } catch (err) {
         throw err;
     }
 
-} 
+}
 
 module.exports.dashBoard = dashBoard;
 
