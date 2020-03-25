@@ -450,27 +450,12 @@ module.exports.getSubCategories = getSubCategories;
 
 /**
  * Get sub sub category
- *
+ * 
+ * @deprecated To be removed soon. getSubCategory can be used instead.
  * @param {Number} sub_category_id - Sub Category.
  */
-const getSubSubCategories = async (sub_category_id) => {
 
-    try {
-        // Get categories
-        const sub_sub_categories = await SubSubCategory.findAll({
-            where: {
-                sub_category_id: sub_category_id
-            },
-        });
-
-        return sub_sub_categories;
-
-    } catch(err) {
-        throw err;
-    }
-}
-
-module.exports.getSubSubCategories = getSubSubCategories;
+module.exports.getSubSubCategories = getSubCategories;
 
 
 /**
