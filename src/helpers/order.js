@@ -1,10 +1,8 @@
 const _ = require('lodash');
 
-const StocksHelper = require('./stocks');
 const Orders = require('../models').orders;
 const OrderDetails = require('../models').order_details;
 const Inventory = require('../models').inventory;
-const Stocks = require('../models').stocks;
 const Users = require('../models').users;
 const Sequelize = require('../models').Sequelize;
 const sequelize = require('../models').sequelize;
@@ -95,57 +93,9 @@ const placeOrder = async (data) => {
             where: {
                 item_id: data.item_id
             },
-            include: [{
-                model: Stocks,
-                as: 'stocks',
-                where: {
-                    remaining_quantity: {
-                        [Sequelize.Op.gt]: 0
-                    }
-                },
-                required: false
-            }]
         });
 
         item = item.dataValues;
-
-        let total_stock;
-        // If stocks are available
-        if( item.stocks.length ) {
-            item.stocks = item.stocks.map((stock) => stock.dataValues);
-
-            // Calculate total stocks.
-            total_stock = item.stocks.reduce((total, current) => {
-
-                total = Utils.addQuantity({
-                    quantity1: total.quantity,
-                    unit1: total.unit,
-                    quantity2: current.remaining_quantity,
-                    unit2: current.remaining_unit,
-                });
-
-                return total;
-            },{ quantity: 0, unit: item.unit });
-
-            item.total_stock = Object.assign({}, total_stock);
-
-        } else {
-            item.total_stock = {
-                quantity: 0,
-                unit: item.unit,
-            };
-        }
-
-        if (!Utils.compare({ quantity: data.quantity, unit: data.unit }, item.total_stock)) {
-            throw new Error('Item out of stock');
-        }
-
-        // Decrement stocks
-        await StocksHelper.decrementStock({
-            item_id: item.item_id,
-            quantity: data.quantity,
-            unit: data.unit
-        }, transaction);
 
         /**
          * Unit price needs to be saved in the order,
@@ -172,13 +122,6 @@ const placeOrder = async (data) => {
 
         // commit the transaction to the database.
         await transaction.commit();
-
-        let time = Utils.timeString();
-        let date = Utils.dateString();
-        const message = `A new order has arrived at ${time} ${date}`;
-        await Utils.sendSMS('8075470928', message);
-        await Utils.sendSMS('9497762519', message);
-        await Utils.sendSMS('9562778198', message);
 
     } catch(err) {
 
@@ -309,12 +252,6 @@ const addItemsToOrder = async (data, transaction) => {
             unit_price = item.market_price;
         }
 
-        // Decrement stocks
-        await StocksHelper.decrementStock({
-            item_id: item.item_id,
-            quantity: data.quantity,
-            unit: data.unit
-        }, transaction);
 
         // Add items to order.
         await OrderDetails.create({
@@ -520,15 +457,6 @@ const cancelOrder = async (order_id) => {
             throw new Error('Order already cancelled');
         }
 
-        for ( let item of order.items ){
-
-            await StocksHelper.incrementStock({
-                item_id: item.item_id,
-                quantity: item.quantity,
-                unit: item.unit
-            }, transaction);
-
-        }
 
         // Set order_status to CANCELLED.
         await order.set('order_status', 'CANCELLED');
