@@ -6,12 +6,8 @@ const sequelize = require('../models').sequelize;
 const Sequelize = require('../models').Sequelize;
 const Inventory = require('../models').inventory;
 const Category = require('../models').category;
-const SubCategory = require('../models').sub_category;
-const SubSubCategory = require('../models').sub_sub_category;
 const Brands = require('../models').brands;
 const CategoryItems = require('../models').category_items;
-const SubCategoryItems = require('../models').sub_category_items;
-const SubSubCategoryItems = require('../models').sub_sub_category_items;
 const Stocks = require('../models').stocks;
 const Offers = require('../models').offers;
 const Op = require('../models').Sequelize.Op;
@@ -23,7 +19,7 @@ const Utils = require('../helpers/utils');
  * Add an item to inventory.
  * Each store is supposed to have seperate inventory.
  * So, store_id should also be passed along with item.
- * 
+ *
  * @param {Object} item - Item details
  */
 const addItem = async (item) => {
@@ -39,8 +35,6 @@ const addItem = async (item) => {
         'image_path',
         'coupon_code',
         'category_id',
-        'sub_category_id',
-        'sub_sub_category_id',
         'quantity',
         'unit'
     ]);
@@ -67,39 +61,15 @@ const addItem = async (item) => {
 
         // Add category if given
         if( data.category_id ){
-
             await CategoryItems.create({
                 item_id: newItem.item_id,
                 category_id: data.category_id
             },{ transaction });
-
-        }
-
-        // Add sub category if any
-        if( data.sub_category_id ){
-
-            await SubCategoryItems.create({
-                item_id: newItem.item_id,
-                sub_category_id: data.sub_category_id
-            },{ transaction });
-
-        }
-
-        // Add sub sub category if any
-        if( data.sub_sub_category_id ){
-
-            await SubSubCategoryItems.create({
-                item_id: newItem.item_id,
-                sub_sub_category_id: data.sub_sub_category_id
-            },{ transaction });
-
         }
 
         // commit the transaction to the database.
         await transaction.commit();
-
     } catch(err) {
-        
         // If a transaction is started, Rollback
         if( transaction ){
             await transaction.rollback();
@@ -115,7 +85,7 @@ module.exports.addItem = addItem;
 /**
  * Edit an item in the inventory.
  * @param {Object} item - Item details
- * 
+ *
  * @returns {null} Absolutely nothing other than some errors if any.
  */
 const editItem = async (item) => {
@@ -305,7 +275,7 @@ module.exports.editImage = editImage;
 /**
  * Delete an item from the database and
  * remove its image from the filesystem.
- * 
+ *
  * @param {Number} item_id - Id of item to be deleted.
  */
 const deleteItem = async (item_id) => {
@@ -323,7 +293,7 @@ const deleteItem = async (item_id) => {
 
         // Get the name and the path of the item image.
         const filename = item.image_path;
-        
+
         // If image_path is not null, join path.
         let file;
         if( filename ){
@@ -349,7 +319,7 @@ const deleteItem = async (item_id) => {
             }
         }
 
-        
+
         // Delete the entries in the junction table.
         await CategoryItems.destroy({
             where: {
@@ -388,7 +358,7 @@ module.exports.deleteItem = deleteItem;
 
 /**
  * Get details of an individual item by its ID.
- * 
+ *
  * @param {Number} item_id - Item ID
  */
 const getItemById = async (item_id) => {
@@ -457,7 +427,7 @@ const getItemById = async (item_id) => {
 
                 return total;
             },{ quantity: 0, unit: item.unit });
-                
+
             // send availability status
             if( parseFloat(total_stock.quantity) ){
                 item.total_stock = Object.assign({}, total_stock, {
@@ -474,7 +444,7 @@ const getItemById = async (item_id) => {
             // convert to all units. except count.
             let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
             item.total_stock.converted = converted;
-                
+
         } else {
             item.total_stock = {
                 quantity: 0,
@@ -489,7 +459,7 @@ const getItemById = async (item_id) => {
     } catch(err) {
         throw err;
     }
-    
+
 }
 
 module.exports.getItemById = getItemById;
@@ -550,7 +520,7 @@ module.exports.getSubCategories = getSubCategories;
 
 /**
  * Get sub sub category
- * 
+ *
  * @param {Number} sub_category_id - Sub Category.
  */
 const getSubSubCategories = async (sub_category_id) => {
@@ -606,7 +576,7 @@ module.exports.getAllCategories = getAllCategories;
  * Get list of all brands and their IDs.
  */
 const getBrands = async () => {
-    
+
     try {
         // Get brands
         const brands = await Brands.findAll();
@@ -627,9 +597,9 @@ module.exports.getBrands = getBrands;
  *  - match category_name in category table.
  *  - match sub_category_name in sub category table.
  *  - match brand_name in brands table.
- * 
+ *
  * #TODO: Rewrite the queries with outer join.
- * 
+ *
  * @param {Object} options - Search Options
  * @param {String} options.search - Search query string.
  * @param {Number} options.offset - The row from which find is to be started.
@@ -703,7 +673,7 @@ const searchItems = async ({ search, offset, limit }) => {
 
                     return total;
                 },{ quantity: 0, unit: item.unit });
-                
+
                 // send availability status
                 if( parseFloat(total_stock.quantity) ){
                     item.total_stock = Object.assign({}, total_stock, {
@@ -720,7 +690,7 @@ const searchItems = async ({ search, offset, limit }) => {
                 // convert to all units. except count.
                 let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
                 item.total_stock.converted = converted;
-                
+
             } else {
                 item.total_stock = {
                     quantity: 0,
@@ -751,7 +721,7 @@ module.exports.searchItems = searchItems;
 
 /**
  * Get items by category, sub category or sub sub category.
- * 
+ *
  * @param {Object} data - IDs of caategory.
  * @param {Number} data.category_id - Level 1 Category ID.
  * @param {Number} data.sub_category_id - Level 2 Category ID.
@@ -902,7 +872,7 @@ const getItemsByCategory = async ({ category_id, sub_category_id, sub_sub_catego
 
                     return total;
                 },{ quantity: 0, unit: item.unit });
-                
+
                 // send availability status
                 if( parseFloat(total_stock.quantity) ){
                     item.total_stock = Object.assign({}, total_stock, {
@@ -919,7 +889,7 @@ const getItemsByCategory = async ({ category_id, sub_category_id, sub_sub_catego
                 // convert to all units. except count.
                 let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
                 item.total_stock.converted = converted;
-                
+
             } else {
                 item.total_stock = {
                     quantity: 0,
@@ -967,7 +937,7 @@ module.exports.getItemsByCategory = getItemsByCategory;
 
 /**
  * Get details of all items in the inventory.
- * 
+ *
  * @param {Object} data - Pagination data.
  * @param {Number} data.offset - The row from which find is to be started.
  * @param {Number} data.limit - Number of rows to be returned.
@@ -1063,7 +1033,7 @@ const getAllItems = async ({ offset, limit, random, stock }) => {
                 // convert to all units. except count.
                 let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
                 item.total_stock.converted = converted;
-                
+
             } else {
                 item.total_stock = {
                     quantity: 0,
@@ -1112,7 +1082,7 @@ module.exports.getAllItems = getAllItems;
 
 /**
  * Get item suggestions.
- * 
+ *
  * @param {String} search - Search query string.
  */
 const suggestItems = async (search) => {
@@ -1226,7 +1196,7 @@ const getItemsByOfferID = async ({ offer_id, offset, limit }) => {
 
                     return total;
                 },{ quantity: 0, unit: item.unit });
-                
+
                 // send availability status
                 if( parseFloat(total_stock.quantity) ){
                     item.total_stock = Object.assign({}, total_stock, {
@@ -1243,7 +1213,7 @@ const getItemsByOfferID = async ({ offer_id, offset, limit }) => {
                 // convert to all units. except count.
                 let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
                 item.total_stock.converted = converted;
-                
+
             } else {
                 item.total_stock = {
                     quantity: 0,
