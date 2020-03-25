@@ -296,11 +296,8 @@ module.exports.getBrands = getBrands;
  *
  * @param {Object} req.query - Query Parameters.
  * @param {String} req.query.category_id - Level 1 Category ID.
- * @param {Number} req.query.sub_category_id - Level 2 Category ID.
- * @param {Number} req.query.sub_sub_category_id - Level 3 Category ID.
  * @param {Number} req.query.page - Page number.
  * @param {Number} req.query.per_page - Number of items to be displayed in a page.
- * @param {String} req.query.stock - String true or false, true selects outofstock products
  */
 const getItemsByCategory = async (req, res, next) => {
     try {
@@ -312,9 +309,6 @@ const getItemsByCategory = async (req, res, next) => {
         // Object to be passed to getItemsByCategory helper.
         const options = {
             category_id: req.query.category_id ? req.query.category_id : null,
-            sub_category_id: req.query.sub_category_id ? req.query.sub_category_id : null,
-            sub_sub_category_id: req.query.sub_sub_category_id ? req.query.sub_sub_category_id : null,
-            stock: req.query.stock === 'true'? true : false,
             offset,
             limit: per_page
         };
@@ -331,7 +325,7 @@ const getItemsByCategory = async (req, res, next) => {
 
         res.json({
             status: 'success',
-            data: result
+            data: result,
         });
     } catch(err) {
         next(err);
