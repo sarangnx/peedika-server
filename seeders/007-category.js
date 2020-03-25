@@ -17,18 +17,22 @@ module.exports = {
         },{
             category_id: 4,
             category_name: 'Household',
+            parent_category_id: 1,
             image: 'household.jpg'
         },{
             category_id: 5,
             category_name: 'Health & Beauty',
+            parent_category_id: 2,
             image: 'healthnbeauty.jpg'
         },{
             category_id: 6,
             category_name: 'Moms & Babies',
+            parent_category_id: 4,
             image: 'momnbaby.jpg'
         },{
             category_id: 7,
             category_name: 'Pet Food',
+            parent_category_id: 5,
             image: 'petfood.jpg'
         },{
             category_id: 8,

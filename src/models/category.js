@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(255),
             allowNull: false
         },
+        parent_category_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         image: {
             type: DataTypes.STRING(100),
             allowNull: true,
@@ -24,14 +28,10 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: false,
         freezeTableName: true,
-        // Full Text Search Index
-        indexes: [{
-            type: 'FULLTEXT',
-            fields: ['category_name']
-        }]
     });
     
     category.associate = function(models) {
+        // association to inventory
         category.belongsToMany(models.inventory, {
             through: models.category_items,
             // field of junction table
@@ -40,7 +40,8 @@ module.exports = (sequelize, DataTypes) => {
             as: 'items'
         });
 
-        category.hasMany(models.sub_category, {
+        // self association
+        category.hasMany(models.category, {
             foreignKey: 'parent_category_id',
             sourcekey: 'category_id',
             as: 'sub_category'
