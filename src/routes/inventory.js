@@ -16,7 +16,7 @@ const router = express.Router();
 // Storage Engine for saving uploaded images.
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        let dest = path.join(__dirname, '..', '..', 'images', 'inventory');
+        const dest = path.resolve(process.env.IMAGE_UPLOAD_PATH);
         cb(null, dest);
     },
     filename: function (req, file, cb) {
