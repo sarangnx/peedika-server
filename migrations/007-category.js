@@ -12,16 +12,19 @@ module.exports = {
                 type: Sequelize.STRING(255),
                 allowNull: false
             },
+            parent_category_id: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
+                references: {
+                    model: 'category',
+                    key: 'category_id'
+                }
+            },
             image: {
                 type: Sequelize.STRING(100),
                 allowNull: true,
                 defaultValue: 'default.jpg'
             }
-        }).then(() => {
-            return queryInterface.addIndex('category',{
-                type: 'FULLTEXT',
-                fields: ['category_name']
-            });
         });
     },
     down: (queryInterface, Sequelize) => {
