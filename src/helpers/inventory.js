@@ -419,28 +419,27 @@ module.exports.getCategories = getCategories;
  * Get the list of all categories and their IDs.
  */
 const getSubCategories = async (category_id) => {
-
     try {
         // Get categories
-        let sub_categories = await SubCategory.findAll({
+        let sub_categories = await Category.findAll({
             where: {
                 parent_category_id: category_id
             },
             include: [{
-                model: SubSubCategory,
-                as: 'sub_sub_category'
+                model: Category,
+                as: 'sub_category'
             }]
         });
 
-        // Set count of sub sub category.
+        // Set count of sub category.
         sub_categories = sub_categories.map((item) => {
             item = item.dataValues
-            item.sub_sub_category = item.sub_sub_category.length;
+            item.sub_category_count = item.sub_category.length;
+            delete item.sub_category;
             return item;
         });
 
         return sub_categories;
-
     } catch(err) {
         throw err;
     }
