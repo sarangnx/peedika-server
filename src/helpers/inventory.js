@@ -702,21 +702,14 @@ module.exports.getItemsByCategory = getItemsByCategory;
  * @param {Object} data - Pagination data.
  * @param {Number} data.offset - The row from which find is to be started.
  * @param {Number} data.limit - Number of rows to be returned.
- * @param {Boolean} data.stock - true or false, true returns only outofstock products.
  */
-const getAllItems = async ({ offset, limit, random, stock }) => {
+const getAllItems = async ({ offset, limit, random }) => {
     try {
-
         const order = random ? {
             order: [
                 [Sequelize.literal('RAND()')]
             ]
         } : {};
-
-        if( stock ) {
-            limit = null;
-            offset = 0;
-        }
 
         // Fetch items from the database.
         const items = await Inventory.findAll({
@@ -727,17 +720,6 @@ const getAllItems = async ({ offset, limit, random, stock }) => {
                     'deletedAt'
                 ]
             },
-            include: [{
-                model: Stocks,
-                as: 'stocks',
-                attributes: {
-                    exclude: [
-                        'createdAt',
-                        'updatedAt',
-                        'deletedAt'
-                    ]
-                },
-            }],
             offset,
             limit,
             ...order
@@ -745,97 +727,13 @@ const getAllItems = async ({ offset, limit, random, stock }) => {
 
         let count = await Inventory.count();
 
-        // Extract datavalues to a seperate variable,
-        // because we cannot add extra info directly.
-        let rows = items.map((row) => row.dataValues);
-
-        // Set discount price and percentage
-        rows = rows.map((item) => {
-
-            // assign discount if offer_price exists and is not equal to market_price
-            if( item.offer_price && item.market_price !== item.offer_price ){
-
-                item.discount = item.market_price - item.offer_price;
-                item.discount_percentage = (( item.discount / item.market_price ) * 100).toFixed(2);
-
-            }
-
-            let total_stock;
-            // If stocks are available
-            if( item.stocks.length ) {
-                item.stocks = item.stocks.map((stock) => stock.dataValues);
-
-                // Calculate total stocks.
-                total_stock = item.stocks.reduce((total, current) => {
-
-                    total = Utils.addQuantity({
-                        quantity1: total.quantity,
-                        unit1: total.unit,
-                        quantity2: current.remaining_quantity,
-                        unit2: current.remaining_unit,
-                    });
-
-                    return total;
-                },{ quantity: 0, unit: item.unit });
-
-                // send availability status
-                if( parseFloat(total_stock.quantity) ){
-                    item.total_stock = Object.assign({}, total_stock, {
-                        available: true,
-                        message: 'Available'
-                    });
-                } else {
-                    item.total_stock = Object.assign({}, total_stock, {
-                        available: false,
-                        message: 'Out of Stock'
-                    });
-                }
-
-                // convert to all units. except count.
-                let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
-                item.total_stock.converted = converted;
-
-            } else {
-                item.total_stock = {
-                    quantity: 0,
-                    unit: item.unit,
-                    available: false,
-                    message: 'Out of Stock'
-                };
-            }
-
-            // remove stocks array.
-            delete item.stocks;
-
-            // return items with stock availability = false
-            // if stock == true
-            if( stock && item.total_stock.available === false ) {
-                return item;
-            } else if ( stock ) {
-                // else if stock == true and stock availability = true
-                // don't return the item.
-                return;
-            } else {
-                return item;
-            }
-
-        });
-
-        rows = _.remove(rows, _.identity);
-
-        if( stock ) {
-            count = rows.length;
-        }
-
         return {
-            items: rows,
+            items: items,
             total: count
         };
-
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.getAllItems = getAllItems;

@@ -341,7 +341,6 @@ module.exports.getItemsByCategory = getItemsByCategory;
  * @param {Object} req.query - Query Parameters.
  * @param {Number} req.query.page - Page number.
  * @param {Number} req.query.per_page - Number of items to be displayed in a page.
- * @param {String} req.query.stock - String true or false, true selects outofstock products
  */
 const getAllItems = async (req, res, next) => {
     try {
@@ -352,7 +351,6 @@ const getAllItems = async (req, res, next) => {
 
         // Object to be passed to getAllItems helper.
         const options = {
-            stock: req.query.stock === 'true'? true : false,
             offset,
             limit: per_page
         };
