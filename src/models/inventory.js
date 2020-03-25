@@ -103,22 +103,6 @@ module.exports = (sequelize, DataTypes) => {
             as: 'category'
         });
 
-        inventory.belongsToMany(models.sub_category, {
-            through: models.sub_category_items,
-            // field of junction table
-            foreignKey: 'item_id',
-            timestamps: false,
-            as: 'sub_category'
-        });
-
-        inventory.belongsToMany(models.sub_sub_category, {
-            through: models.sub_sub_category_items,
-            // field of junction table
-            foreignKey: 'item_id',
-            timestamps: false,
-            as: 'sub_sub_category'
-        });
-
         inventory.belongsToMany(models.offers, {
             through: models.offer_items,
             // field of junction table
