@@ -462,26 +462,25 @@ module.exports.getSubSubCategories = getSubCategories;
  * get all categories, sub categories and sub sub categories.
  */
 const getAllCategories = async () => {
-
     try {
-
         const categories = await Category.findAll({
             include: [{
-                model: SubCategory,
+                model: Category,
                 as: 'sub_category',
                 include: [{
-                    model: SubSubCategory,
-                    as: 'sub_sub_category'
+                    model: Category,
+                    as: 'sub_category'
                 }]
-            }]
+            }],
+            where: {
+                parent_category_id: null, // so that it starts from root
+            }
         });
 
         return categories;
-
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.getAllCategories = getAllCategories;
