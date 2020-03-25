@@ -10,28 +10,41 @@ module.exports = (sequelize, DataTypes) =>{
             autoIncrement : true,
             allowNull: false
         },
-        address: {
-            type: DataTypes.JSON,
-            allowNull: true
-        },
         name: {
             type: DataTypes.STRING(225),
             allowNull: false,
+        },
+        area: {
+            // area or locality
+            type: DataTypes.STRING(100),
+            allowNull: true,
+        },
+        city: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+        },
+        district: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+        },
+        state: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+        },
+        pincode: {
+            type: DataTypes.STRING(10),
+            allowNull: true,
+        },
+        ward: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
         },
         phone: {
             type: DataTypes.STRING(15),
             allowNull: true
         },
-        gst: {
-            type: DataTypes.STRING(20),
-            allowNull: true
-        },
         email: {
             type: DataTypes.STRING(100),
-            allowNull: true
-        },
-        rating: {
-            type: DataTypes.REAL(2,1),
             allowNull: true
         },
         opening_time: {

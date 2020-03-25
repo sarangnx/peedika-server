@@ -11,7 +11,6 @@ const Offers = require('../helpers/offers');
  * @param {Array} req.body.items - Array of Item IDs.
  */
 const addOffer = async (data, req, res, next) => {
-
     try {
         const userdata = req.body;
 
@@ -20,11 +19,9 @@ const addOffer = async (data, req, res, next) => {
         res.json({
             status: 'success'
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.addOffer = addOffer;
@@ -34,9 +31,7 @@ module.exports.addOffer = addOffer;
  * View Offers.
  */
 const viewOffers = async (data, req, res, next) => {
-
     try {
-
         const page = parseInt(req.query.page) || 1;
         const per_page = parseInt(req.query.per_page) || 100;
 
@@ -61,24 +56,21 @@ const viewOffers = async (data, req, res, next) => {
             status: 'success',
             data: offers
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.viewOffers = viewOffers;
 
 
 const editOffer = async (data, req, res, next) => {
-
     try {
-
+        // TODO
+        res.end();
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.editOffer = editOffer;
@@ -90,9 +82,7 @@ module.exports.editOffer = editOffer;
  * @param {*} req.query.offer_id - Offer ID
  */
 const deleteOffer = async (data, req, res, next) => {
-
     try {
-
         const offer_id = req.query.offer_id;
 
         await Offers.deleteOffer(offer_id);
@@ -100,11 +90,9 @@ const deleteOffer = async (data, req, res, next) => {
         res.json({
             status: 'success'
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.deleteOffer = deleteOffer;
@@ -116,9 +104,7 @@ module.exports.deleteOffer = deleteOffer;
  * @param {*} req.query.offer_id - Offer ID
  */
 const deactivateOffer = async (data, req, res, next) => {
-
     try {
-
         const offer_id = req.query.offer_id;
 
         await Offers.deactivateOffer(offer_id);
@@ -126,24 +112,21 @@ const deactivateOffer = async (data, req, res, next) => {
         res.json({
             status: 'success'
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.deactivateOffer = deactivateOffer;
 
 
 const activateOffer = async (data, req, res, next) => {
-
     try {
-
+        // TODO
+        res.end();
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.activateOffer = activateOffer;
@@ -155,9 +138,7 @@ module.exports.activateOffer = activateOffer;
  * @param {String} req.query.search - search query
  */
 const suggestOffers = async (req, res, next) => {
-
     try {
-
         const search = req.query.search;
 
         const result = await Offers.suggestOffer(search);
@@ -166,11 +147,9 @@ const suggestOffers = async (req, res, next) => {
             status: 'success',
             data: result
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.suggestOffers = suggestOffers;

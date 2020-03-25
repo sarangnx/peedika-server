@@ -9,12 +9,16 @@ module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.bulkInsert('users',[{
             user_id: 1,
-            email: 'ajeshashok09@gmail.com',
-            phone: '9562778198',
-            password: hashPassword('ajeshashok'),
-            roles: JSON.stringify(['owner']),
-            usergroup: 'store'
-        }],{})
+            email: 'sarang98divakaran@gmail.com',
+            phone: '8086451278',
+            password: hashPassword('sarang123'),
+            usergroup: 'superadmin'
+        },{
+            user_id: 2,
+            email: 'owner@gmail.com',
+            password: hashPassword('sarang123'),
+            usergroup: 'storeowner'
+        }],{});
     },
 
     down: (queryInterface, Sequelize) => {

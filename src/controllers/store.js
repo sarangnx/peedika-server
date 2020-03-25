@@ -5,14 +5,13 @@ const Store = require('../helpers/store');
  * Requires store owner id.
  */
 const createNewStore = async (data, req, res, next) => {
-
-    // Get ownerID from form-data.
-    const owner_id = req.body.owner_id;
-
     try {
+        // Get ownerID from form-data.
+        const owner_id = req.body.owner_id;
+
         // Add details to stores table.
         const { store_id } = await Store.addStoreDetails(req.body);
-        
+
         // Add an entry to store_owner junction table.
         await Store.addStoreOwner(store_id, owner_id);
 
@@ -20,7 +19,6 @@ const createNewStore = async (data, req, res, next) => {
             status: 'success',
             message: 'Store Created'
         });
-
     } catch(err) {
         next(err);
     }
@@ -33,7 +31,6 @@ module.exports.createNewStore = createNewStore;
  * Create a new Owner user and profile.
  */
 const createNewOwner = async (data, req, res, next) => {
-
     try {
         // Create an owner. Returns ID of owner.
         const owner_id = await Store.addOwner(req.body);
@@ -62,7 +59,6 @@ module.exports.createNewOwner = createNewOwner;
  * parameter.
  */
 const editStore = async (data, req, res, next) => {
-    
     try {
         const { store_id } = req.params;
 
@@ -80,11 +76,9 @@ const editStore = async (data, req, res, next) => {
             status: 'success',
             message: 'Store details changed'
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.editStore = editStore;
@@ -95,10 +89,9 @@ module.exports.editStore = editStore;
  * Password cannot be changed in this function.
  */
 const editOwner = async (data, req, res, next) => {
-
     try {
         const { owner_id } = req.params;
-        
+
         const ownerData = req.body;
         ownerData.owner_id = owner_id;
 
@@ -112,7 +105,6 @@ const editOwner = async (data, req, res, next) => {
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.editOwner = editOwner;
@@ -122,10 +114,8 @@ module.exports.editOwner = editOwner;
  * View Store Details.
  */
 const viewStore = async (data, req, res, next) => {
-
-    const { store_id } = req.params;
-
     try {
+        const { store_id } = req.params;
 
         // Get details of store.
         const store = await Store.getStoreDetails(store_id);
@@ -135,11 +125,9 @@ const viewStore = async (data, req, res, next) => {
             status: 'success',
             data: store
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.viewStore = viewStore;
@@ -149,10 +137,8 @@ module.exports.viewStore = viewStore;
  * View owner details.
  */
 const viewOwner = async (data, req, res, next) => {
-
-    const { owner_id } = req.params;
-
     try {
+        const { owner_id } = req.params;
 
         const owner = await Store.getOwnerDetails(owner_id);
 
@@ -160,7 +146,6 @@ const viewOwner = async (data, req, res, next) => {
             status: 'success',
             data: owner
         });
-
     } catch(err) {
         next(err);
     }
@@ -173,9 +158,7 @@ module.exports.viewOwner = viewOwner;
  * Get stats to display in the dashboard section
  */
 const dashBoard = async (data, req, res, next) => {
-
     try {
-
         const store_id = req.query.store_id;
 
         const stats = await Store.dashBoard(store_id);
@@ -184,11 +167,9 @@ const dashBoard = async (data, req, res, next) => {
             status: 'success',
             data: stats
         });
-
     } catch(err) {
         next(err);
     }
-
 }
 
 module.exports.dashBoard = dashBoard;
