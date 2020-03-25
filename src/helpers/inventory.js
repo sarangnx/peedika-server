@@ -450,7 +450,7 @@ module.exports.getSubCategories = getSubCategories;
 
 /**
  * Get sub sub category
- * 
+ *
  * @deprecated To be removed soon. getSubCategory can be used instead.
  * @param {Number} sub_category_id - Sub Category.
  */
@@ -638,87 +638,27 @@ module.exports.searchItems = searchItems;
  *
  * @param {Object} data - IDs of caategory.
  * @param {Number} data.category_id - Level 1 Category ID.
- * @param {Number} data.sub_category_id - Level 2 Category ID.
- * @param {Number} data.sub_sub_category_id - Level 3 Category ID.
  * @param {Number} data.offset - The row from which find is to be started.
  * @param {Number} data.limit - Number of rows to be returned.
- * @param {Boolean} data.stock - true or false, true returns only outofstock products.
  */
-const getItemsByCategory = async ({ category_id, sub_category_id, sub_sub_category_id, offset, limit, stock }) => {
-
+const getItemsByCategory = async ({ category_id, offset, limit }) => {
     try {
-
-        /***
-         * If category ID is passed, prepare a where clause,
-         * with category_id.
-         * Pass it to include using Object spread.
-         */
-        const category_filter = category_id ? {
-            where: {
-                category_id
-            },
-            required: true
-        } :  { };
-
-        /***
-         * If sub category ID is passed, prepare a where clause,
-         * with sub_category_id.
-         * Pass it to include using Object spread.
-         */
-        const sub_category_filter = sub_category_id ? {
-            where: {
-                sub_category_id
-            },
-            required: true
-        } :  { };
-
-        /***
-         * If sub sub category ID is passed, prepare a where clause,
-         * with sub_category_id. (not sub_sub, because self reference).
-         * Pass it to include using Object spread.
-         */
-        const sub_sub_category_filter = sub_sub_category_id ? {
-            where: {
-                sub_sub_category_id
-            },
-            required: true
-        } :  { };
-
-        // If stock == true, forget about offset and limit,
-        // its a nightmare to implement that since total_stock is,
-        // calculated after items are fetched from database.
-        // using aggregate function with include is a nightmare.
-        if( stock ) {
-            limit = null;
-            offset = 0;
+        if(!category_id) {
+            throw new Error('Category ID Required.');
         }
 
         // Fetch item from the database.
         const items = await Inventory.findAll({
-            // Level 1: Category
             include: [{
                 model: Category,
                 as: 'category',
-                ...category_filter,
+                where: {
+                    category_id
+                },
+                required: true,
                 through: { attributes: [] }, // don't show junction table
                 attributes: [], // exclude attributes from include
-            },{
-                model: SubCategory,
-                as: 'sub_category',
-                ...sub_category_filter,
-                through: { attributes: [] }, // don't show junction table
-                attributes: [], // exclude attributes from include
-            },{
-                model: SubSubCategory,
-                as: 'sub_sub_category',
-                ...sub_sub_category_filter,
-                through: { attributes: [] }, // don't show junction table
-                attributes: [], // exclude attributes from include
-            },{
-                model: Stocks,
-                as: 'stocks'
             }],
-
             attributes: {
                 exclude: [
                     'createdAt',
@@ -735,112 +675,19 @@ const getItemsByCategory = async ({ category_id, sub_category_id, sub_sub_catego
             include: [{
                 model: Category,
                 as: 'category',
-                ...category_filter,
-                through: { attributes: [] }, // don't show junction table
-                attributes: [], // exclude attributes from include
-            },{
-                model: SubCategory,
-                as: 'sub_category',
-                ...sub_category_filter,
-                through: { attributes: [] }, // don't show junction table
-                attributes: [], // exclude attributes from include
-            },{
-                model: SubSubCategory,
-                as: 'sub_sub_category',
-                ...sub_sub_category_filter,
+                where: {
+                    category_id
+                },
+                required: true,
                 through: { attributes: [] }, // don't show junction table
                 attributes: [], // exclude attributes from include
             }],
         });
 
-
-        // Extract datavalues to a seperate variable,
-        // because we cannot add extra info directly.
-        let rows = items.map((row) => row.dataValues);
-
-        // Set discount price and percentage
-        rows = rows.map((item) => {
-
-            // assign discount if offer_price exists and is not equal to market_price
-            if( item.offer_price && item.market_price !== item.offer_price ){
-
-                item.discount = item.market_price - item.offer_price;
-                item.discount_percentage = (( item.discount / item.market_price ) * 100).toFixed(2);
-
-            }
-
-            let total_stock;
-            // If stocks are available
-            if( item.stocks.length ) {
-                item.stocks = item.stocks.map((stock) => stock.dataValues);
-
-                // Calculate total stocks.
-                total_stock = item.stocks.reduce((total, current) => {
-
-                    total = Utils.addQuantity({
-                        quantity1: total.quantity,
-                        unit1: total.unit,
-                        quantity2: current.remaining_quantity,
-                        unit2: current.remaining_unit,
-                    });
-
-                    return total;
-                },{ quantity: 0, unit: item.unit });
-
-                // send availability status
-                if( parseFloat(total_stock.quantity) ){
-                    item.total_stock = Object.assign({}, total_stock, {
-                        available: true,
-                        message: 'Available'
-                    });
-                } else {
-                    item.total_stock = Object.assign({}, total_stock, {
-                        available: false,
-                        message: 'Out of Stock'
-                    });
-                }
-
-                // convert to all units. except count.
-                let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
-                item.total_stock.converted = converted;
-
-            } else {
-                item.total_stock = {
-                    quantity: 0,
-                    unit: item.unit,
-                    available: false,
-                    message: 'Out of Stock'
-                };
-            }
-
-            // remove stocks array.
-            delete item.stocks;
-
-            // return items with stock availability = false
-            // if stock == true
-            if( stock && item.total_stock.available === false ) {
-                return item;
-            } else if ( stock ) {
-                // else if stock == true and stock availability = true
-                // don't return the item.
-                return;
-            } else {
-                return item;
-            }
-
-        });
-
-        rows = _.remove(rows, _.identity);
-
-        if( stock ) {
-            count = rows.length;
-        }
-
         return {
-            items: rows,
+            items: items,
             total: count
         };
-
     } catch(err) {
         throw err;
     }
