@@ -240,13 +240,17 @@ const dashBoard = async (store_id) => {
             throw new Error('Store ID required.');
         }
 
-        const where = {
-            store_id
-        };
+        const total_orders = await Orders.count({
+            where: {
+                store_id,
+            },
+        });
 
-        const total_orders = await Orders.count({ where });
-
-        const total_users = await Users.count();
+        const total_users = await Users.count({
+            where: {
+                usergroup: 'user',
+            }
+        });
 
 
         const most_sold_items = await OrderDetails.findAll({
