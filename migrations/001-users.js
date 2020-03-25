@@ -70,6 +70,10 @@ module.exports = {
                     'delivery',
                 ]
             },
+            blocked: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE,
