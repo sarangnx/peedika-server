@@ -89,11 +89,9 @@ module.exports.addItem = addItem;
  * @returns {null} Absolutely nothing other than some errors if any.
  */
 const editItem = async (item) => {
-
     let transaction;
 
     try {
-
         // Start a transaction.
         transaction = await sequelize.transaction();
 
@@ -114,6 +112,7 @@ const editItem = async (item) => {
 
         // Update the instance.
         oldItem.update(item);
+        await oldItem.save({ transaction });
 
         // Delete the image if the path is changed to new one.
         if( file && oldItem.changed('image_path') ){
@@ -135,70 +134,28 @@ const editItem = async (item) => {
             }
         }
 
-
-        // Delete category, subcategory and subsubcategory items.
-        await CategoryItems.destroy({
-            where: {
-                item_id: item.item_id
-            }
-        },{ transaction });
-
-        await SubCategoryItems.destroy({
-            where: {
-                item_id: item.item_id
-            }
-        },{ transaction });
-
-        await SubSubCategoryItems.destroy({
-            where: {
-                item_id: item.item_id
-            }
-        },{ transaction });
-
-
         // change category id
         if( item.category_id ){
-            await CategoryItems.create({
-                item_id: item.item_id,
-                category_id: item.category_id
-            },{
+            const categoryItem = await CategoryItems.findOne({
                 where: {
-                    item_id: item.item_id
-                }
-            },{ transaction });
-        }
+                    item_id: item.item_id,
+                },
+            });
 
-        // change sub category id
-        if( item.sub_category_id ){
-            await SubCategoryItems.create({
-                item_id: item.item_id,
-                sub_category_id: item.sub_category_id
-            },{
-                where: {
-                    item_id: item.item_id
-                }
-            },{ transaction });
+            if(categoryItem) {
+                await categoryItem.set({ category_id: item.category_id });
+                await categoryItem.save({ transaction });
+            } else {
+                await CategoryItems.create({
+                    item_id: item.item_id,
+                    category_id: item.category_id
+                }, { transaction });
+            }
         }
-
-        // change sub sub category id
-        if( item.sub_sub_category_id ){
-            await SubSubCategoryItems.create({
-                item_id: item.item_id,
-                sub_sub_category_id: item.sub_sub_category_id
-            },{
-                where: {
-                    item_id: item.item_id
-                }
-            },{ transaction });
-        }
-
-        await transaction.commit();
 
         // finally save the updated data to the database.
-        await oldItem.save();
-
+        await transaction.commit();        
     } catch(err) {
-
         // If a transaction is started, Rollback
         if( transaction ){
             await transaction.rollback();
@@ -206,7 +163,6 @@ const editItem = async (item) => {
 
         throw err;
     }
-
 }
 
 module.exports.editItem = editItem;
