@@ -398,13 +398,15 @@ module.exports.getItemById = getItemById;
  * Get the list of all categories and their IDs.
  */
 const getCategories = async () => {
-
     try {
-        // Get categories
-        const categories = await Category.findAll();
+        // Get top level categories
+        const categories = await Category.findAll({
+            where: {
+                parent_category_id: null,
+            },
+        });
 
         return categories;
-
     } catch(err) {
         throw err;
     }
