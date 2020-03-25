@@ -521,9 +521,8 @@ module.exports.getBrands = getBrands;
  */
 const searchItems = async ({ search, offset, limit }) => {
     try {
-
         // Match item_name in Inventory.
-        const items = await Inventory.findAll({
+        const items = await Inventory.findAndCountAll({
             offset,
             limit,
             where: {
@@ -531,100 +530,12 @@ const searchItems = async ({ search, offset, limit }) => {
                     [Op.substring]: search
                 }
             },
-            include: [{
-                model: Stocks,
-                as: 'stocks',
-                attributes: {
-                    exclude: [
-                        'createdAt',
-                        'updatedAt',
-                        'deletedAt'
-                    ]
-                },
-                required: false
-            }]
-        });
-
-        const count = await Inventory.count({
-            offset,
-            limit,
-            where: {
-                item_name: {
-                    [Op.substring]: search
-                }
-            },
-        });
-
-        // Extract datavalues to a seperate variable,
-        // because we cannot add extra info directly.
-        let rows = items.map((row) => row.dataValues);
-
-        // Set discount price and percentage
-        rows = rows.map((item) => {
-
-            // assign discount if offer_price exists and is not equal to market_price
-            if( item.offer_price && item.market_price !== item.offer_price ){
-
-                item.discount = item.market_price - item.offer_price;
-                item.discount_percentage = (( item.discount / item.market_price ) * 100).toFixed(2);
-
-            }
-
-            let total_stock;
-            // If stocks are available
-            if( item.stocks.length ) {
-                item.stocks = item.stocks.map((stock) => stock.dataValues);
-
-                // Calculate total stocks.
-                total_stock = item.stocks.reduce((total, current) => {
-
-                    total = Utils.addQuantity({
-                        quantity1: total.quantity,
-                        unit1: total.unit,
-                        quantity2: current.remaining_quantity,
-                        unit2: current.remaining_unit,
-                    });
-
-                    return total;
-                },{ quantity: 0, unit: item.unit });
-
-                // send availability status
-                if( parseFloat(total_stock.quantity) ){
-                    item.total_stock = Object.assign({}, total_stock, {
-                        available: true,
-                        message: 'Available'
-                    });
-                } else {
-                    item.total_stock = Object.assign({}, total_stock, {
-                        available: false,
-                        message: 'Out of Stock'
-                    });
-                }
-
-                // convert to all units. except count.
-                let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
-                item.total_stock.converted = converted;
-
-            } else {
-                item.total_stock = {
-                    quantity: 0,
-                    unit: item.unit,
-                    available: false,
-                    message: 'Out of Stock'
-                };
-            }
-
-            // remove stocks array.
-            delete item.stocks;
-            return item;
-
         });
 
         return {
-            items: rows,
-            total: count
+            items: items.rows,
+            total: items.count
         };
-
     } catch(err) {
         throw err;
     }
