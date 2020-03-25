@@ -18,19 +18,18 @@ const registerUser = async (userdata, options) => {
      * Add username as (phone|email) and password fields
      * to options object, to pass to Database.
      */
-    options[fieldName] = userdata.username;
-    options.password = Utils.hashPassword(userdata.password);
+    userdata[fieldName] = userdata.username;
+    userdata.password = Utils.hashPassword(userdata.password);
 
     let transaction;
     try {
         transaction = await sequelize.transaction();
-        const user = await Users.create(options,{ transaction });
+        const user = await Users.create(userdata,{ transaction });
 
         await transaction.commit();
 
         return user;
     } catch(err) {
-
         // If a transaction is started, Rollback
         if( transaction ){
             await transaction.rollback();
@@ -38,7 +37,6 @@ const registerUser = async (userdata, options) => {
 
         throw err;
     }
-
 }
 
 module.exports.registerUser = registerUser;
@@ -49,9 +47,7 @@ module.exports.registerUser = registerUser;
  * @param {String} username - email or phone number that is used as a login username
  */
 const forgotPassword = async (username) => {
-
     try {
-
         let fieldName = getFieldName(username);
 
         // find the user using given username
@@ -122,9 +118,7 @@ module.exports.forgotPassword = forgotPassword;
  * @param {String} username - Email or phone number used for login.
  */
 const verifyOTP = async (OTP, username) => {
-
     try {
-
         let fieldName = getFieldName(username);
 
         // find the user using given username
@@ -164,7 +158,6 @@ const verifyOTP = async (OTP, username) => {
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.verifyOTP = verifyOTP;
@@ -178,9 +171,7 @@ module.exports.verifyOTP = verifyOTP;
  * @param {String} otp - OTP code sent for verification.
  */
 const changePassword = async (username, password, otp) => {
-
     try {
-
         let fieldName = getFieldName(username);
 
         // get timestamp equals to now - 10 minutes
@@ -217,7 +208,6 @@ const changePassword = async (username, password, otp) => {
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.changePassword = changePassword;
