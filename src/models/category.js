@@ -31,6 +31,15 @@ module.exports = (sequelize, DataTypes) => {
     });
     
     category.associate = function(models) {
+        // association to inventory
+        category.belongsToMany(models.inventory, {
+            through: models.category_items,
+            // field of junction table
+            foreignKey: 'category_id',
+            timestamps: false,
+            as: 'items'
+        });
+
         // self association
         category.hasMany(models.category, {
             foreignKey: 'parent_category_id',
