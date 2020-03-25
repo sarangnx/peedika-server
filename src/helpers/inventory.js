@@ -327,18 +327,6 @@ const deleteItem = async (item_id) => {
             }
         });
 
-        await SubCategoryItems.destroy({
-            where: {
-                item_id: item.item_id
-            }
-        });
-
-        await SubSubCategoryItems.destroy({
-            where: {
-                item_id: item.item_id
-            }
-        });
-
         // delete the database row.
         try {
             // try deleting permanently.
@@ -347,7 +335,6 @@ const deleteItem = async (item_id) => {
             // if not, set deletedAt flag.
             await item.destroy();
         }
-
     } catch(err) {
         throw err;
     }
