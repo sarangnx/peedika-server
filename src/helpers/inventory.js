@@ -362,9 +362,7 @@ module.exports.deleteItem = deleteItem;
  * @param {Number} item_id - Item ID
  */
 const getItemById = async (item_id) => {
-
     try {
-
         // Find item by ID
         let item = await Inventory.findOne({
             where: {
@@ -382,84 +380,15 @@ const getItemById = async (item_id) => {
                 as: 'category',
                 through: { attributes: [] } // don't show junction table
             },{
-                model: SubCategory,
-                as: 'sub_category',
-                through: { attributes: [] } // don't show junction table
-            },{
-                model: SubSubCategory,
-                as: 'sub_sub_category',
-                through: { attributes: [] } // don't show junction table
-            },{
                 model: Brands,
                 as: 'brand'
-            },{
-                model: Stocks,
-                as: 'stocks',
-                attributes: {
-                    exclude: [
-                        'createdAt',
-                        'updatedAt',
-                        'deletedAt'
-                    ]
-                },
             }],
-            order: [
-                [Stocks, 'arrival_date', 'DESC']
-            ]
         });
 
-        item = item.dataValues;
-
-        let total_stock;
-        // If stocks are available
-        if( item.stocks.length ) {
-            item.stocks = item.stocks.map((stock) => stock.dataValues);
-
-            // Calculate total stocks.
-            total_stock = item.stocks.reduce((total, current) => {
-
-                total = Utils.addQuantity({
-                    quantity1: total.quantity,
-                    unit1: total.unit,
-                    quantity2: current.remaining_quantity,
-                    unit2: current.remaining_unit,
-                });
-
-                return total;
-            },{ quantity: 0, unit: item.unit });
-
-            // send availability status
-            if( parseFloat(total_stock.quantity) ){
-                item.total_stock = Object.assign({}, total_stock, {
-                    available: true,
-                    message: 'Available'
-                });
-            } else {
-                item.total_stock = Object.assign({}, total_stock, {
-                    available: false,
-                    message: 'Out of Stock'
-                });
-            }
-
-            // convert to all units. except count.
-            let converted = Utils.convertToAll(item.total_stock.quantity, item.total_stock.unit);
-            item.total_stock.converted = converted;
-
-        } else {
-            item.total_stock = {
-                quantity: 0,
-                unit: item.unit,
-                available: false,
-                message: 'Out of Stock'
-            };
-        }
-
         return item;
-
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.getItemById = getItemById;
