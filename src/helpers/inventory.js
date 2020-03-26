@@ -495,11 +495,50 @@ module.exports.searchItems = searchItems;
  * @param {Number} data.offset - The row from which find is to be started.
  * @param {Number} data.limit - Number of rows to be returned.
  */
-const getItemsByCategory = async ({ category_id, offset, limit }) => {
+const getItemsByCategory = async ({ category_id, offset, limit, recursive }) => {
     try {
         if(!category_id) {
             throw new Error('Category ID Required.');
         }
+
+        let category_ids = [];
+
+        // recurse through category heirarchy
+        if(recursive) {
+            // find all subcategories of given category
+            // upto 2 levels
+            const children = await Category.findOne({
+                include: [{
+                    model: Category,
+                    as: 'sub_category',
+                    include: [{
+                        model: Category,
+                        as: 'sub_category',
+                    }],
+                }],
+                where: {
+                    category_id,
+                }
+            });
+
+            let ids = [];
+            if(children.sub_category) {
+                ids = children.sub_category.map((item) => {
+                    let subids = [];
+                    if(item.sub_category) {
+                        subids = item.sub_category.map((item) => {
+                            return item.category_id
+                        });
+                    }
+
+                    return [item.category_id, ...subids];
+                });
+            }
+            category_ids = ids;
+        }
+
+        category_ids = [ category_id, ...category_ids ];
+        category_ids = category_ids.flat(3);
 
         // Fetch item from the database.
         const items = await Inventory.findAll({
@@ -507,7 +546,7 @@ const getItemsByCategory = async ({ category_id, offset, limit }) => {
                 model: Category,
                 as: 'category',
                 where: {
-                    category_id
+                    category_id: category_ids,
                 },
                 required: true,
                 through: { attributes: [] }, // don't show junction table
