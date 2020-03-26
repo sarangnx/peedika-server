@@ -342,7 +342,7 @@ module.exports.count = count;
 /**
  * Checkout. Move all items from cart to orders.
  *
- * @param {Number} user_id - User ID.
+ * @param {Number} data.user_id - User ID.
  * @param {String} data.address1 - Address line 1
  * @param {String} data.address2 - Address line 2
  * @param {String} data.address3 - Address line 3
@@ -354,9 +354,7 @@ module.exports.count = count;
  * @param {String} data.phone - Phone Number
  */
 const checkout = async (data) => {
-
     try {
-
         // get items for cart.
         const cart = await Cart.findOne({
             where: {
@@ -409,12 +407,10 @@ const checkout = async (data) => {
 
         // Add items to orders.
         for( let key in itemgroups ){
-
             itemgroup = itemgroups[key];
 
             let transaction;
             try {
-
                 // start a transaction
                 transaction = await sequelize.transaction();
 
@@ -422,28 +418,17 @@ const checkout = async (data) => {
                 order_id = await Order.createOrder({
                     user_id: itemgroup[0].user_id,
                     store_id: itemgroup[0].store_id,
-                    address1: data.address1,
-                    address2: data.address2,
-                    address3: data.address3,
-                    city: data.city,
+                    house: data.house,
+                    ward: data.ward,
+                    area: data.area,
                     district: data.district,
-                    state: data.state,
-                    pincode: data.pincode,
                     landmark: data.landmark,
+                    pincode: data.pincode,
                     phone: data.phone,
                 }, transaction);
 
                 // loop through array of items and add then to order_details.
                 for( let item of itemgroup ){
-
-                    // Check the stock availability of item.
-                    if( await Stocks.checkStock({
-                        item_id: item.item_id,
-                        quantity: item.quantity,
-                        unit: item.unit
-                    }) === false ) {
-                        throw new Error('Item out of stock');
-                    }
 
                     // add item to order_details
                     await Order.addItemsToOrder({
@@ -461,9 +446,7 @@ const checkout = async (data) => {
                 }
 
                 await transaction.commit();
-
             } catch(err) {
-
                 // If a transaction is started, Rollback
                 if( transaction ){
                     await transaction.rollback();
@@ -471,13 +454,10 @@ const checkout = async (data) => {
 
                 throw err;
             }
-
         }
-
     } catch(err) {
         throw err;
     }
-
 }
 
 module.exports.checkout = checkout;
