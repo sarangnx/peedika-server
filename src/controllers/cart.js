@@ -94,7 +94,7 @@ const viewCart = async (data, req, res, next) => {
         const { user_id } = data.data;
 
         // get cart items.
-        await Cart.viewCart(user_id);
+        const cart = await Cart.viewCart(user_id);
 
         res.json({
             status: 'success',
