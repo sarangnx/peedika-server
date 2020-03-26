@@ -265,34 +265,6 @@ const viewCart = async (user_id) => {
             return null
         }
 
-        cart = cart.dataValues;
-
-        cart.items = cart.items.map((item) => {
-            item = item.dataValues;
-
-            // set base price.
-            // if offer price < market price : base price = offer price
-            let base_price;
-            if( item.item_details &&
-                item.item_details.offer_price &&
-                item.item_details.offer_price < item.item_details.market_price ) {
-                base_price = item.item_details.offer_price;
-            } else {
-                base_price = item.item_details.market_price;
-            }
-
-            // calculate total price of the user given quantity.
-            item.total_price = calculatePrice({
-                base_price,
-                base_quantity: item.item_details.quantity,
-                base_unit: item.item_details.unit,
-                quantity: item.quantity,
-                unit: item.unit
-            });
-
-            return item;
-        });
-
         return cart;
 
     } catch(err) {
