@@ -120,7 +120,7 @@ const count =  async (data, req, res, next) => {
         const { user_id } = data.data;
 
         // get count.
-        await Cart.count(user_id);
+        const count = await Cart.count(user_id);
 
         res.json({
             status: 'success',
