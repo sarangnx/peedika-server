@@ -11,7 +11,7 @@ const calculatePrice = require('./utils').calculatePrice;
 
 /**
  * Add a single item to a user's cart.
- * 
+ *
  * @param {Object} data - Item details.
  * @param {Number} data.user_id - User ID
  * @param {Number} data.item_id - ID of the item
@@ -44,7 +44,7 @@ const addToCart = async ( data = {} ) => {
          * and the items added to it if any,
          * for the user_id.
          * A user can have only a single cart at a time.
-         * 
+         *
          * All items are added to a single cart for a user_id.
          */
         let cart = await Cart.findOne({
@@ -110,7 +110,7 @@ const addToCart = async ( data = {} ) => {
     } catch(err) {
         throw err;
     }
-    
+
 }
 
 module.exports.addToCart = addToCart;
@@ -121,10 +121,10 @@ module.exports.addToCart = addToCart;
  * This method is intended for incrementing,
  * decrementing or changing quantity of an item,
  * already in the cart.
- * 
+ *
  * PS: This method is not for deleting items or
  * adding new items to cart.
- * 
+ *
  * @param {Object} data - Item Details
  * @param {Number} data.cart_id - Cart ID
  * @param {Number} data.item_id - Item ID
@@ -166,7 +166,7 @@ module.exports.editCartItem = editCartItem;
  * Remove an item from the cart.
  * If no items are remaining in the cart,
  * delete the cart.
- * 
+ *
  * @param {Object} data - Details of item to be removed.
  * @param {Object} data.cart_id - Cart ID.
  * @param {Object} data.item_id - Item ID.
@@ -218,9 +218,9 @@ module.exports.deleteCartItem = deleteCartItem;
  * View items in a user's cart.
  * Since a user is supposed to have only a single cart,
  * at a time, user_id is sufficient for getting details.
- * 
+ *
  * @param {Number} user_id - User ID
- * 
+ *
  * @returns {Object} Cart with the details
  * of items in the cart.
  */
@@ -240,11 +240,24 @@ const viewCart = async (user_id) => {
             include: [{
                 model: CartDetails,
                 as: 'items',
+                attributes: {
+                    exclude: [
+                        'createdAt',
+                        'updatedAt',
+                    ],
+                },
                 include: [{
                     model: Inventory,
-                    as: 'item_details'
-                }]
-            }]
+                    as: 'item_details',
+                    attributes: {
+                        exclude: [
+                            'createdAt',
+                            'updatedAt',
+                            'deletedAt',
+                        ],
+                    },
+                }],
+            }],
         });
 
         // if no items in cart return null
@@ -260,7 +273,9 @@ const viewCart = async (user_id) => {
             // set base price.
             // if offer price < market price : base price = offer price
             let base_price;
-            if(item.item_details.offer_price && item.item_details.offer_price < item.item_details.market_price){
+            if( item.item_details &&
+                item.item_details.offer_price &&
+                item.item_details.offer_price < item.item_details.market_price ) {
                 base_price = item.item_details.offer_price;
             } else {
                 base_price = item.item_details.market_price;
@@ -291,7 +306,7 @@ module.exports.viewCart = viewCart;
 
 /**
  * Get the number of items in a user's cart.
- * 
+ *
  * @param {Number} user_id - User ID
  */
 const count = async (user_id) => {
@@ -326,7 +341,7 @@ module.exports.count = count;
 
 /**
  * Checkout. Move all items from cart to orders.
- * 
+ *
  * @param {Number} user_id - User ID.
  * @param {String} data.address1 - Address line 1
  * @param {String} data.address2 - Address line 2
@@ -371,7 +386,7 @@ const checkout = async (data) => {
                 quantity: item.quantity,
                 unit: item.unit
             };
-            
+
             return order_item;
         });
 
@@ -396,7 +411,7 @@ const checkout = async (data) => {
         for( let key in itemgroups ){
 
             itemgroup = itemgroups[key];
-            
+
             let transaction;
             try {
 
@@ -420,7 +435,7 @@ const checkout = async (data) => {
 
                 // loop through array of items and add then to order_details.
                 for( let item of itemgroup ){
-                    
+
                     // Check the stock availability of item.
                     if( await Stocks.checkStock({
                         item_id: item.item_id,
