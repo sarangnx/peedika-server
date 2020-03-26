@@ -310,7 +310,8 @@ const getItemsByCategory = async (req, res, next) => {
         const options = {
             category_id: req.query.category_id ? req.query.category_id : null,
             offset,
-            limit: per_page
+            limit: per_page,
+            recursive: req.query.recursive === 'true' ? true : false,
         };
 
         let result = await Inventory.getItemsByCategory(options);
