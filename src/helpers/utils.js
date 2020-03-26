@@ -374,7 +374,7 @@ const sendMail = async (receiver, subject, messagetext) => {
             // default message fields
 
             // sender info
-            from: `Ashokanz Online <${process.env.SMTP_USER}>`,
+            from: `Peedika <${process.env.SMTP_USER}>`,
         }
     );
 
