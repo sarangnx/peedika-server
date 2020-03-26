@@ -46,7 +46,7 @@ app.use(passport.initialize());
  * Serving static files.
  * all requests to /images/ looks up in the images directory
  */
-app.use('/images', express.static(path.join(__dirname, '..', 'images')));
+app.use('/images', express.static(path.resolve(process.env.EXPRESS_STATIC_PATH)));
 
 
 /***
