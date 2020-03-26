@@ -33,14 +33,12 @@ module.exports.hashPassword = hashPassword;
 const formatAddress = (data) => {
     // format address
     let address = {
-        address1: data.address1 || null,
-        address2: data.address2 || null,
-        address3: data.address3 || null,
-        city: data.city || null,
+        house: data.house || null,
+        ward: data.ward || null,
+        area: data.area || null,
         district: data.district || null,
-        state: data.state || null,
-        pincode: data.pincode || null,
         landmark: data.landmark || null,
+        pincode: data.pincode || null,
         phone: data.phone || null
     }
 
