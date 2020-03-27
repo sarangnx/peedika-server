@@ -62,6 +62,7 @@ const users = require('./routes/users');
 const notifications = require('./routes/notifications');
 const offers = require('./routes/offers');
 const banners = require('./routes/banners');
+const localbodies = require('./routes/localbodies');
 
 /***
  *  ============ Register Routes ============
@@ -76,6 +77,7 @@ app.use('/api/users', users);
 app.use('/api/notifications', notifications);
 app.use('/api/offers', offers);
 app.use('/api/banners', banners);
+app.use('/api/localbodies',localbodies);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
