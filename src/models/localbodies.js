@@ -1,7 +1,7 @@
 
 module.exports = (sequelize, DataTypes) =>{
     const localbodies = sequelize.define('localbodies', {
-        panchayath_id: {
+        localbody_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement : true,
