@@ -387,31 +387,6 @@ const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, 
 
         orders.count = count;
 
-        // Add total price of an order
-        orders.rows = orders.rows.map((order) => {
-            order = order.dataValues;
-
-            order.items = order.items.map((item) => item.dataValues);
-
-            // calculate grand total price of the order.
-            order.grand_total = order.items.reduce((total, current, index) => {
-
-                // Calculate total price of the item.
-                order.items[index].total_price = Utils.calculatePrice({
-                    base_price: current.unit_price,
-                    base_quantity: current.item_details.quantity,
-                    base_unit: current.item_details.unit,
-                    quantity: current.quantity,
-                    unit: current.unit
-                });
-
-                return parseFloat(total) + parseFloat(order.items[index].total_price);
-
-            }, 0);
-
-            return order;
-        });
-
         return orders;
 
     } catch (err) {
