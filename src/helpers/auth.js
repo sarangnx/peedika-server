@@ -20,6 +20,7 @@ const registerUser = async (userdata, options) => {
      */
     userdata[fieldName] = userdata.username;
     userdata.password = Utils.hashPassword(userdata.password);
+    userdata.usergroup =  options.usergroup;
 
     let transaction;
     try {
