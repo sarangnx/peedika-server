@@ -112,7 +112,8 @@ const logger = winston.createLogger({
         new winston.transports.Console(options.console),
     ],
     exitOnError: false, // do not exit on handled exceptions
-    emitErrs: false, // suppress winston errors
 });
+
+logger.emitErrs = false; // suppress winston errors
 
 module.exports = logger;
