@@ -23,7 +23,7 @@ module.exports = {
     /**
      * Get full details of a localbody.
      */
-    async getLocalbodyById(data, req, res, next) {
+    async getLocalbodyById(req, res, next) {
         try {
             const { localbody_id } = req.params;
 
