@@ -12,6 +12,6 @@ router.post('/add', jwtAuth, Localbodies.createLocalbody);
 router.get('/localbody/:localbody_id', jwtAuth, Localbodies.getLocalbodyById);
 
 // List localbodies
-router.get('/list', jwtAuth, Localbodies.listLocalbodies);
+router.get('/list', Localbodies.listLocalbodies);
 
 module.exports = router;

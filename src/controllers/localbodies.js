@@ -38,7 +38,7 @@ module.exports = {
         }
     },
 
-    async listLocalbodies(data, req, res, next) {
+    async listLocalbodies(req, res, next) {
         try {
             const options = req.query;
             
