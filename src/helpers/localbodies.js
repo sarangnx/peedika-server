@@ -4,7 +4,8 @@ const Utils = require('./utils');
 module.exports = {
 
     /**
-     * 
+     * Add a new localbody
+     *
      * @param {Object} data - Localbody data
      * @param {String} name - Localbody Name
      * @param {String} code - Localbody Code
@@ -38,6 +39,20 @@ module.exports = {
         }
 
         await Localbodies.create(data);
+    },
+
+    /**
+     * Get full details of a localbody.
+     * @param {Number} localbody_id - Localbody Id
+     */
+    async getLocalbodyById(localbody_id) {
+        const localbody = await Localbodies.findOne({
+            where: {
+                localbody_id,
+            },
+        });
+
+        return localbody;
     },
 };
 
