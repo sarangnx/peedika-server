@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         unit_price: {
             // price at the time of order.
             type: DataTypes.DECIMAL(8,2),
-            allowNull: false
+            allowNull: true
         },
         quantity: {
             // Quantity specified by the user.

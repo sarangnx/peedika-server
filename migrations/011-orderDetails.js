@@ -22,7 +22,7 @@ module.exports = {
             },
             unit_price: {
                 type: Sequelize.DECIMAL(8,2),
-                allowNull: false
+                allowNull: true
             },
             quantity: {
                 // Quantity specified by the user.
