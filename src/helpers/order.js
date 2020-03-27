@@ -620,6 +620,8 @@ module.exports.deleteOrder = async function(order_id) {
                 order_id,
             }
         },{ force: true, transaction });
+
+        await transaction.commit();
     
     } catch(err) {
         // If a transaction is started, Rollback
