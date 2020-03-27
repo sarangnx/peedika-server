@@ -598,3 +598,35 @@ const getStats = async(store_id) => {
 }
 
 module.exports.getStats = getStats;
+
+/**
+ * Delete an order and order_details associated with it.
+ * @param {Number} order_id - Order ID
+ */
+module.exports.deleteOrder = async function(order_id) {
+    let transaction
+    try {
+        // Start a transaction.
+        transaction = await sequelize.transaction();
+
+        await OrderDetails.destroy({
+            where: {
+                order_id,
+            }
+        },{ force: true, transaction });
+
+        await Orders.destroy({
+            where: {
+                order_id,
+            }
+        },{ force: true, transaction });
+    
+    } catch(err) {
+        // If a transaction is started, Rollback
+        if( transaction ){
+            await transaction.rollback();
+        }
+
+        throw err;
+    }
+}

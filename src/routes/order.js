@@ -24,4 +24,7 @@ router.patch('/status', jwtAuth, Order.changeStatus);
 // Get order stats
 router.get('/stats', jwtAuth, Order.getStats);
 
+// delete order
+router.delete('/order/:order_id', jwtAuth, Order.deleteOrder);
+
 module.exports = router;
