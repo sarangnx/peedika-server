@@ -283,14 +283,8 @@ const deleteItem = async (item_id) => {
             }
         });
 
-        // delete the database row.
-        try {
-            // try deleting permanently.
-            await item.destroy({ force: true });
-        } catch(err) {
-            // if not, set deletedAt flag.
-            await item.destroy();
-        }
+        // only soft delete items to avoid reference issues.
+        await item.destroy();
     } catch(err) {
         throw err;
     }
