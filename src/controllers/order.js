@@ -153,3 +153,22 @@ const getStats = async (data, req, res, next) => {
 }
 
 module.exports.getStats = getStats;
+
+/**
+ * Delete order
+ * @param {Number} req.query.order_id
+ */
+module.exports.deleteOrder = async function(data, req, res, next) {
+    try {
+        const { order_id } = req.params;
+
+        await Order.deleteOrder(order_id);
+
+        res.json({
+            status: 'success',
+            message: 'Order deleted successfully.'
+        });
+    } catch (err) {
+        next(err);
+    }
+}
