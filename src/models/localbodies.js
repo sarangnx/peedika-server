@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) =>{
             allowNull: false,
         },
         code: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING(20),
             allowNull: true,
         },
         district: {
