@@ -54,5 +54,33 @@ module.exports = {
 
         return localbody;
     },
+
+    /**
+     * Get list of localbodies
+     * @param {Object} options - List options
+     * @param {Number} options.offset - - The row from which find is to be started.
+     * @param {Number} options.limit - Number of rows to be returned.
+     * @param {String} options.type - Filter by type of localbody
+     * @param {String} options.district - Filter by district
+     * @param {String} options.state - Filter by state
+     */
+    async listLocalbodies(options = {}) {
+        // convert all to lowercase
+        options.state = options.state? options.state.toLowerCase() : null;
+        options.district = options.district? options.district.toLowerCase() : null;
+        options.type = options.type? options.type.toLowerCase() : null;
+
+        const localbodies = await Localbodies.findAndCountAll({
+            where: {
+                ...(options.type && { type: options.type }),
+                ...(options.state && { state: options.state }),
+                ...(options.district && { district: options.district }),
+            },
+            ...(options.offset && { offset: options.offset }),
+            ...(options.limit && { limit: options.limit }),
+        });
+
+        return localbodies;
+    }
 };
 

@@ -36,5 +36,29 @@ module.exports = {
         } catch(err) {
             next(err);
         }
-    }
+    },
+
+    async listLocalbodies(data, req, res, next) {
+        try {
+            const options = req.query;
+            
+            if(options.page) {
+                options.per_page = options.per_page || 10;
+                options.offset = ( options.page - 1 ) * options.per_page;
+            }
+
+            if(options.per_page) {
+                options.limit = options.per_page;
+            }
+
+            const localbodies = await Localbodies.listLocalbodies(options);
+
+            res.json({
+                status: 'success',
+                localbodies,
+            });
+        } catch(err) {
+            next(err);
+        }
+    },
 }
