@@ -27,7 +27,7 @@ module.exports = {
             category_id: 6,
             category_name: 'Fruits',
             parent_category_id: 2,
-            image: 'fuits.jpg'
+            image: 'fruits.jpg'
         }],{});
     },
     down: (queryInterface, Sequelize) => {
