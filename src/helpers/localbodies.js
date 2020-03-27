@@ -21,10 +21,10 @@ module.exports = {
      * @param {Boolean} status - status of localbody
      */
     async createLocalbody(data) {
-        Utils.required(data, [
+        Utils.required([
             'name',
             'district',
-        ]);
+        ], data);
 
         if(data.state) {
             data.state = data.state.toLowerCase();

@@ -7,8 +7,8 @@ const axios = require('axios');
 /***
  * Limit conversion to 'ml', 'l', 'g', 'kg' only.
  */
-const massexclude = [ 'mcg', 'mg', 'mt', 'oz', 'lb', 't'];
-const volumeexclude = [ 'mm3', 'cm3', 'ml', 'cl', 'dl', 'kl', 'm3', 'km3', 'krm', 'tsk', 'msk', 'kkp', 'glas', 'kanna', 'tsp', 'Tbs', 'in3', 'fl-oz', 'cup', 'pnt', 'qt', 'gal', 'ft3', 'yd3'];
+const massexclude = ['mcg', 'mg', 'mt', 'oz', 'lb', 't'];
+const volumeexclude = ['mm3', 'cm3', 'ml', 'cl', 'dl', 'kl', 'm3', 'km3', 'krm', 'tsk', 'msk', 'kkp', 'glas', 'kanna', 'tsp', 'Tbs', 'in3', 'fl-oz', 'cup', 'pnt', 'qt', 'gal', 'ft3', 'yd3'];
 
 /**
  * Method used to hash password.
@@ -18,7 +18,7 @@ const volumeexclude = [ 'mm3', 'cm3', 'ml', 'cl', 'dl', 'kl', 'm3', 'km3', 'krm'
  * @returns {String} - Hashed Password
  */
 const hashPassword = (password) => {
-    let hash = bcrypt.hashSync(password,8);
+    let hash = bcrypt.hashSync(password, 8);
     return hash;
 }
 
@@ -70,11 +70,11 @@ const generateInvoiceNumber = ({ store_id, user_id }) => {
     // and convert to uppercase.
     // then remove white spaces.
     // Eg: AUG 25 2019
-    date = date.slice(4).toUpperCase().replace(/\s/g,'');
+    date = date.slice(4).toUpperCase().replace(/\s/g, '');
 
     // split time string from GMT and take first half.
     // remove trailing spaces.
-    time = time.split('GMT')[0].trim().replace(/:/g,'');
+    time = time.split('GMT')[0].trim().replace(/:/g, '');
 
     return `${date}T${time}-STR${store_id}-USR${user_id}`;
 }
@@ -83,28 +83,47 @@ module.exports.generateInvoiceNumber = generateInvoiceNumber;
 
 
 /**
- * Used to throw an error if Object keys are missing.
+ * @function required
+ * @description Used to throw an error if Object keys are missing.
  *
  * @param {Array} properties - Array of properties / object key names.
  * @param {Object} object - Object which is to be checked.
- * @throws {Error} If a property is not found in the object.
  */
-const required = (properties, object = {}) => {
-
-    // sometimes object passed from the express has no prototype.
-    // so add hasOwnProperty method to the object.
-    object.hasOwnProperty = Object.hasOwnProperty;
-
+module.exports.required = function(properties, object = {}) {
     properties.forEach((property) => {
-        if( !object.hasOwnProperty(property) ){
-            throw new Error(`${property} required.`);
+        if (!Object.prototype.hasOwnProperty.call(object, property)) {
+            // Bad Rerquest (400)
+            throw new ServerError(`${property} required.`, 400);
+        }
+    });
+}
+
+/**
+ * @function requireAny
+ * @description Used to throw an error if no key in the list of keys
+ * is found in the object.
+ *
+ * @param {Array} properties - Array of properties / object key names.
+ * @param {Object} object - Object which is to be checked.
+ *
+ * @returns {String} Returns first non-null key.
+ */
+module.exports.requireAny = function(properties, object = {}) {
+    // return first property that is not null
+    // eslint-disable-next-line consistent-return, array-callback-return
+    const match = properties.find((property) => {
+        if (Object.prototype.hasOwnProperty.call(object, property)) {
+            return property;
         }
     });
 
+    if (!match) {
+        const message = `Any one of ${properties.toString()} is required.`;
+        throw new ServerError(message, 400);
+    }
+
+    return match;
 }
-
-module.exports.required = required;
-
 
 /**
  * Calculate the price of a given quantity of an item,
@@ -140,7 +159,7 @@ const calculatePrice = (data) => {
     let price;
 
     // quantities of units other than count are to be converted.
-    if( base_unit !== 'count' ) {
+    if (base_unit !== 'count') {
 
         // convert quantity passed by user from unit to base unit.
         quantity = convert(quantity).from(unit).to(base_unit);
@@ -151,7 +170,7 @@ const calculatePrice = (data) => {
     }
 
     // price of the item as per user's quantity and unit.
-    price =  ( base_price / base_quantity ) * quantity;
+    price = (base_price / base_quantity) * quantity;
 
     return price;
 
@@ -175,9 +194,9 @@ const addQuantity = ({ quantity1, unit1, quantity2, unit2 }) => {
     let quantity;
     let conversion;
 
-    switch(unit1) {
+    switch (unit1) {
         // Convert Mass and calculate
-        case 'g' :
+        case 'g':
         case 'kg':
             quantity1 = parseFloat(convert(quantity1).from(unit1).to('g'));
             quantity2 = parseFloat(convert(quantity2).from(unit2).to('g'));
@@ -187,7 +206,7 @@ const addQuantity = ({ quantity1, unit1, quantity2, unit2 }) => {
             break;
         // Convert Volume and calculate
         case 'ml':
-        case 'l' :
+        case 'l':
             quantity1 = parseFloat(convert(quantity1).from(unit1).to('ml'));
             quantity2 = parseFloat(convert(quantity2).from(unit2).to('ml'));
 
@@ -228,9 +247,9 @@ const subtractQuantity = ({ quantity1, unit1, quantity2, unit2 }) => {
     let quantity;
     let conversion;
 
-    switch(unit1) {
+    switch (unit1) {
         // Convert Mass and calculate
-        case 'g' :
+        case 'g':
         case 'kg':
             quantity1 = parseFloat(convert(quantity1).from(unit1).to('g'));
             quantity2 = parseFloat(convert(quantity2).from(unit2).to('g'));
@@ -241,7 +260,7 @@ const subtractQuantity = ({ quantity1, unit1, quantity2, unit2 }) => {
             break;
         // Convert Volume and calculate
         case 'ml':
-        case 'l' :
+        case 'l':
             quantity1 = parseFloat(convert(quantity1).from(unit1).to('ml'));
             quantity2 = parseFloat(convert(quantity2).from(unit2).to('ml'));
 
@@ -282,13 +301,13 @@ const convertToAll = (quantity, unit) => {
 
     let conversion = {};
 
-    switch(unit) {
-        case 'g' :
+    switch (unit) {
+        case 'g':
         case 'kg':
             let g = convert(quantity).from(unit).to('g');
             let kg = convert(quantity).from(unit).to('kg');
 
-            conversion = Object.assign({},{
+            conversion = Object.assign({}, {
                 g: {
                     quantity: parseFloat(g)
                 },
@@ -299,11 +318,11 @@ const convertToAll = (quantity, unit) => {
             break;
 
         case 'ml':
-        case 'l' :
+        case 'l':
             let ml = convert(quantity).from(unit).to('ml');
             let l = convert(quantity).from(unit).to('l');
 
-            conversion = Object.assign({},{
+            conversion = Object.assign({}, {
                 ml: {
                     quantity: parseFloat(ml)
                 },
@@ -334,14 +353,14 @@ module.exports.convertToAll = convertToAll;
  */
 const compare = (a, b) => {
 
-    if(a.unit !== 'count' && b.unit !== 'count' ){
+    if (a.unit !== 'count' && b.unit !== 'count') {
         a.quantity = convert(a.quantity).from(a.unit).to(b.unit);
     }
 
     a.quantity = parseFloat(a.quantity);
     b.quantity = parseFloat(b.quantity);
 
-    if( a.quantity <= b.quantity ){
+    if (a.quantity <= b.quantity) {
         return true;
     } else {
         return false;
@@ -394,12 +413,12 @@ module.exports.sendMail = sendMail;
  * Create an OTP string.
  * @param {Number} length - Length of output string.
  */
-const generateOTP = ( length = 6 ) => {
+const generateOTP = (length = 6) => {
     let result = '';
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let chLength = characters.length;
 
-    for( let i = 0; i < length; i++ ){
+    for (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * chLength));
     }
 
@@ -414,10 +433,10 @@ module.exports.generateOTP = generateOTP;
  * @param {Number} receiver - Phone Number of the Receiver.
  * @param {String} message - Message Text.
  */
-const sendSMS = async ( receiver, message ) => {
+const sendSMS = async (receiver, message) => {
 
     receiver = receiver.toString();
-    if(receiver.length === 10){
+    if (receiver.length === 10) {
         // prepend countrycode (default: India [91] )
         receiver = `91${receiver}`;
     } else {
@@ -461,7 +480,7 @@ const timeString = () => {
     let date = new Date();
     let hour = date.getHours();
     let mins = `0${date.getMinutes()}`.slice(-2);
-    let ampm = hour >= 12 ? 'PM' : 'AM'; 
+    let ampm = hour >= 12 ? 'PM' : 'AM';
     hour = hour > 12 ? hour - 12 : hour;
     hour = `0${hour}`.slice(-2);
 
