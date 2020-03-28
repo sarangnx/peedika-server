@@ -391,14 +391,6 @@ const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, 
             return orders
         }
 
-        // Find the count seperately, because, findAndCountAll returns count of joins too.
-        // simply taking length of orders.rows won't work either, becuase we use limits.
-        const count = await Orders.count({
-            where
-        });
-
-        orders.count = count;
-
         return orders;
 
     } catch (err) {
