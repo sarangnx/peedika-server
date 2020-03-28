@@ -1,6 +1,6 @@
 const Users = require('../models').users;
+const Localbodies = require('../models').localbodies;
 const Utils = require('./utils');
-
 
 /**
  * Get the profile details of a user.
@@ -13,6 +13,10 @@ const getUserProfile = async (user_id) => {
             where: {
                 user_id
             },
+            include: [{
+                model: Localbodies,
+                as: 'localbody'
+            }],
             attributes: {
                 exclude: [
                     'password',
@@ -53,8 +57,10 @@ const editUserProfile = async (data) => {
                 'name',
                 'house',
                 'ward',
+                'localbody_id',
                 'area',
                 'district',
+                'state',
                 'pincode',
                 'landmark',
                 'email',
@@ -92,8 +98,10 @@ const editUserAddress = async (data) => {
             fields: [
                 'house',
                 'ward',
+                'localbody_id',
                 'area',
                 'district',
+                'state',
                 'pincode',
                 'landmark',
             ],
@@ -118,6 +126,10 @@ module.exports.editUserAddress = editUserAddress;
 const getUserProfiles = async (offset, limit) => {
     try {
         const users = await Users.findAndCountAll({
+            include: [{
+                model: Localbodies,
+                as: 'localbody'
+            }],
             attributes: {
                 exclude: [
                     'roles',
