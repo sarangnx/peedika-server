@@ -306,7 +306,7 @@ module.exports.status = status;
  * @param {Number} options.offset - Page number.
  * @param {Number} options.limit - Orders per page.
  */
-const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, offset, limit, district }) => {
+const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, offset, limit, district, localbody_id }) => {
 
     try {
 
@@ -375,9 +375,15 @@ const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, 
                     as: 'localbody',
                     ...(district && {
                         where: {
-                            district
+                            district,
                         },
-                        required: true
+                        required: true,
+                    }),
+                    ...(localbody_id && {
+                        where: {
+                            localbody_id,
+                        },
+                        required: true,
                     }),
                 }],
                 required: true
@@ -406,6 +412,12 @@ const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, 
                             district
                         },
                         required: true
+                    }),
+                    ...(localbody_id && {
+                        where: {
+                            localbody_id,
+                        },
+                        required: true,
                     }),
                 }],
                 required: true
