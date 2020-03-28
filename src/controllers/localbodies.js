@@ -44,7 +44,7 @@ module.exports = {
             
             if(options.page) {
                 options.per_page = options.per_page || 10;
-                options.offset = ( options.page - 1 ) * options.per_page;
+                options.offset = ( parseInt(options.page) - 1 ) * parseInt(options.per_page);
             }
 
             if(options.per_page) {
