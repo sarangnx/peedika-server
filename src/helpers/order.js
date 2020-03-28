@@ -3,6 +3,7 @@ const _ = require('lodash');
 const Orders = require('../models').orders;
 const OrderDetails = require('../models').order_details;
 const Inventory = require('../models').inventory;
+const Localbodies = require('../models').localbodies;
 const Users = require('../models').users;
 const Sequelize = require('../models').Sequelize;
 const sequelize = require('../models').sequelize;
@@ -305,7 +306,7 @@ module.exports.status = status;
  * @param {Number} options.offset - Page number.
  * @param {Number} options.limit - Orders per page.
  */
-const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, offset, limit }) => {
+const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, offset, limit, district }) => {
 
     try {
 
@@ -369,6 +370,17 @@ const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, 
                         'deletedAt',
                     ]
                 },
+                include: [{
+                    model: Localbodies,
+                    as: 'localbody',
+                    ...(district && {
+                        where: {
+                            district
+                        },
+                        required: true
+                    }),
+                }],
+                required: true
             }],
             offset,
             limit
