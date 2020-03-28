@@ -78,7 +78,8 @@ const viewOrder = async (data, req, res, next) => {
             order_status: req.query.order_status ? req.query.order_status : null,
             offset,
             limit: per_page,
-            order_by: req.query.order_by ? req.query.order_by : 'DESC'
+            order_by: req.query.order_by ? req.query.order_by : 'DESC',
+            district: req.query.district || null,
         };
 
         const orders = await Order.viewOrder(options);
