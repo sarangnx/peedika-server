@@ -36,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
+        localbody_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         area: {
             type: DataTypes.STRING(100),
             allowNull: true
@@ -47,6 +51,11 @@ module.exports = (sequelize, DataTypes) => {
         district: {
             type: DataTypes.STRING(50),
             allowNull: true
+        },
+        state: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+            defaultValue: 'kerala'
         },
         pincode: {
             type: DataTypes.STRING(10),
@@ -109,6 +118,12 @@ module.exports = (sequelize, DataTypes) => {
         users.hasOne(models.codes, {
             foreignKey: 'user_id',
             as: 'code'
+        });
+
+        users.belongsTo(models.localbodies, {
+            foreignKey: 'localbody_id',
+            constraints: false,
+            as: 'localbody'
         });
     };
     return users;
