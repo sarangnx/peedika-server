@@ -306,7 +306,7 @@ module.exports.status = status;
  * @param {Number} options.offset - Page number.
  * @param {Number} options.limit - Orders per page.
  */
-const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, offset, limit, district, localbody_id }) => {
+const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, offset, limit, district, localbody_id, ward }) => {
 
     try {
 
@@ -386,7 +386,12 @@ const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, 
                         required: true,
                     }),
                 }],
-                required: true
+                required: true,
+                ...(ward && {
+                    where: {
+                        ward,
+                    },
+                }),
             }],
             offset,
             limit
