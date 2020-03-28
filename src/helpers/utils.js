@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const convert = require('convert-units');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
+const ServerError = require('./ServerError');
 
 /***
  * Limit conversion to 'ml', 'l', 'g', 'kg' only.
