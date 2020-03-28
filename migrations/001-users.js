@@ -34,6 +34,10 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 allowNull: true
             },
+            localbody_id: {
+                type: Sequelize.INTEGER,
+                allowNull: true
+            },
             area: {
                 type: Sequelize.STRING(100),
                 allowNull: true
@@ -45,6 +49,11 @@ module.exports = {
             district: {
                 type: Sequelize.STRING(50),
                 allowNull: true
+            },
+            state: {
+                type: Sequelize.STRING(100),
+                allowNull: true,
+                defaultValue: 'kerala'
             },
             pincode: {
                 type: Sequelize.STRING(10),

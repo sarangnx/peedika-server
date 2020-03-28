@@ -77,7 +77,11 @@ module.exports = (sequelize, DataTypes) =>{
     }, { freezeTableName: true, paranoid:true });
 
     localbodies.associate = function(models) {
-        // association
+        localbodies.hasMany(models.users, {
+            foreignKey: 'user_id',
+            constraints: false,
+            as: 'users'
+        });
     };
     return localbodies;
 };
