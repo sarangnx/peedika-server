@@ -17,3 +17,36 @@ yarn migrate
 # start server
 yarn dev
 ```
+
+## Supporting Malayalam in DB
+```sql
+ALTER DATABASE peedia CHARACTER SET utf8 COLLATE utf8_general_ci;
+SET foreign_key_checks = 0;
+
+-- you have to convert each table seperately
+ALTER TABLE banners CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE brands CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE cart CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE cart_details CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE category CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE category_items CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE codes CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE inventory CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE localbodies CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE offer_items CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE offers CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE order_details CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE orders CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE product_ratings CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE stocks CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE store_owners CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE store_ratings CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE stores CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE sub_category CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE sub_category_items CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE sub_sub_category CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE sub_sub_category_items CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE users CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+SET foreign_key_checks = 1;
+```
