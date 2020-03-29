@@ -103,8 +103,9 @@ const getUserProfiles = async (data, req, res, next) => {
         const per_page = parseInt(req.query.per_page) || 20;
 
         const offset = ( page - 1 ) * per_page;
+        const usergroup = req.query.usergroup || null;
 
-        const result = await Users.getUserProfiles(offset, per_page);
+        const result = await Users.getUserProfiles(offset, per_page, usergroup);
 
         // combine result with extra properties.
         Object.assign(result, {

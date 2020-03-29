@@ -123,7 +123,7 @@ module.exports.editUserAddress = editUserAddress;
  * @param {Number} offset - Page Number.
  * @param {Number} limit - Number of items Per page.
  */
-const getUserProfiles = async (offset, limit) => {
+const getUserProfiles = async (offset, limit, usergroup = null) => {
     try {
         const users = await Users.findAndCountAll({
             include: [{
@@ -141,7 +141,12 @@ const getUserProfiles = async (offset, limit) => {
                 ]
             },
             offset,
-            limit
+            limit,
+            ...(usergroup && {
+                where: {
+                    usergroup,
+                },
+            }),
         });
 
         return users;
