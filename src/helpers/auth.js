@@ -63,7 +63,7 @@ const forgotPassword = async (username) => {
         const OTP = Utils.generateOTP();
 
         let html, sms;
-        let subject = `Password Reset for Peedia`;
+        let subject = `Password Reset for Peedika`;
 
         // customize message in case the user is not found in the database.
         if(user) {
@@ -83,14 +83,14 @@ const forgotPassword = async (username) => {
 
             // Define subject and message for email
             html = `<p>Hi, You recently requested to reset your password for your` +
-                ` Peedia Account.<p>` + 
+                ` Peedika Account.<p>` + 
                 `<p>Your OTP is <span style="font-size:20px;font-weight:bold;">${OTP}</span>.</p>` + 
                 `<p>Code is valid for 10 minutes only. Please DO NOT share this with anyone.</p>`;
 
-            sms = `Your OTP for Peedia is ${OTP}.`;
+            sms = `Your OTP for Peedika is ${OTP}.`;
 
         } else {
-            html = `<p>Hi, You recently requested a password reset at Peedia. ` +
+            html = `<p>Hi, You recently requested a password reset at Peedika. ` +
                 `But we could not find any account linked to this email.</p>` +
                 `<p>Are you sure you used this email for login?</p>`;
 
