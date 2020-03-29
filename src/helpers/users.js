@@ -9,7 +9,6 @@ const Utils = require('./utils');
  * Password reset link is sent through mail
  */
 module.exports.addUser = async function(userdata) {
-
     Utils.required([
         'name',
         'email',
@@ -18,6 +17,9 @@ module.exports.addUser = async function(userdata) {
 
     userdata.password = Utils.hashPassword('password');
     userdata.usergroup = userdata.usergroup || 'user';
+    userdata.ward = userdata.ward || null;
+    userdata.phone = userdata.phone || null;
+    console.log(userdata);
 
     const user = await Users.create(userdata);
 
