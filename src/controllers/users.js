@@ -1,6 +1,24 @@
 const Users = require('../helpers/users');
 
 /**
+ * Create new user from admin dashboard
+ */
+module.exports.addUser = async function(data, req, res, next) {
+    try {
+        const userdata = req.body;
+
+        await Users.addUser(userdata);
+
+        res.json({
+            status: 'success',
+            message: 'User added and mail sent.'
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+
+/**
  * Get the profile of a user.
  *  
  * @param {Number} req.params.user_id;

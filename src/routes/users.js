@@ -8,6 +8,8 @@ const jwtAuth = require('../middleware/auth.middleware').jwtAuth;
 
 const router = express.Router();
 
+// Create new user
+router.post('/add', jwtAuth, Users.addUser);
 
 // Get profile of a user using user_id.
 router.get('/profile/:user_id', jwtAuth, Users.getUserProfile);
