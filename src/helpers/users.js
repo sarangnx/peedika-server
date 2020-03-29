@@ -1,6 +1,7 @@
 const Users = require('../models').users;
 const Codes = require('../models').codes;
 const Localbodies = require('../models').localbodies;
+const StoreOwners = require('../models').store_owners;
 const Utils = require('./utils');
 
 
@@ -19,9 +20,16 @@ module.exports.addUser = async function(userdata) {
     userdata.usergroup = userdata.usergroup || 'user';
     userdata.ward = userdata.ward || null;
     userdata.phone = userdata.phone || null;
-    console.log(userdata);
 
     const user = await Users.create(userdata);
+
+    if(userdata.usergroup === 'storeowner' || userdata.usergroup === 'delivery' ) {
+        const store_id = userdata.store_id || 1;
+        await StoreOwners.create({
+            store_owner_id: user.user_id,
+            store_id,
+        });
+    }
 
     const OTP = Utils.generateOTP();
 
