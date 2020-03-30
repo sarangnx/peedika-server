@@ -61,6 +61,8 @@ module.exports.addUser = async function(userdata) {
 
         await Utils.sendMail(user.email, 'Account Generated for Peedika', message);
 
+        transaction.commit();
+
         return user;
     } catch (err) {
         // If a transaction is started, Rollback
