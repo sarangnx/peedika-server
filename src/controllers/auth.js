@@ -40,7 +40,7 @@ const login = (req, res, next) => {
                     });
                 }
 
-                user = _.pick(user, ['user_id', 'roles', 'usergroup', 'store']);
+                user = _.pick(user, ['user_id', 'usergroup', 'store']);
                 const token = await jwt.sign(user, process.env.JWT_ENCRYPTION, { expiresIn: process.env.JWT_EXPIRATION });
                 const data = { user, token };
                 return res.json({
