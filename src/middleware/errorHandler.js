@@ -19,5 +19,4 @@ module.exports = function (error, req, res, next) {
 
     const message = `${req.method || ''} ${req.url || ''} ${error.message}`;
     logger.error(message);
-    next();
 };
