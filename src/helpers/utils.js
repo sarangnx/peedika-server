@@ -18,8 +18,8 @@ const volumeexclude = ['mm3', 'cm3', 'ml', 'cl', 'dl', 'kl', 'm3', 'km3', 'krm',
  * @param {String} password - Password
  * @returns {String} - Hashed Password
  */
-const hashPassword = (password) => {
-    let hash = bcrypt.hashSync(password, 8);
+const hashPassword = async (password) => {
+    let hash = await bcrypt.hash(password, 8);
     return hash;
 }
 

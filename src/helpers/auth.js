@@ -19,7 +19,7 @@ const registerUser = async (userdata, options) => {
      * to options object, to pass to Database.
      */
     userdata[fieldName] = userdata.username;
-    userdata.password = Utils.hashPassword(userdata.password);
+    userdata.password = await Utils.hashPassword(userdata.password);
     userdata.usergroup =  options.usergroup;
 
     let transaction;
@@ -201,7 +201,7 @@ const changePassword = async (username, password, otp) => {
         }
 
         // hash the password.
-        const passwordHash = Utils.hashPassword(password);
+        const passwordHash = await Utils.hashPassword(password);
 
         user.set('password', passwordHash);
         await user.save();

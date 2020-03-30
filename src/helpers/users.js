@@ -21,7 +21,7 @@ module.exports.addUser = async function(userdata) {
         // Start a transaction.
         transaction = await sequelize.transaction();
 
-        userdata.password = Utils.hashPassword('password');
+        userdata.password = await Utils.hashPassword('password');
         userdata.usergroup = userdata.usergroup || 'user';
         userdata.ward = userdata.ward || null;
         userdata.phone = userdata.phone || null;
