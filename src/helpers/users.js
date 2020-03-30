@@ -4,7 +4,6 @@ const Localbodies = require('../models').localbodies;
 const StoreOwners = require('../models').store_owners;
 const Utils = require('./utils');
 
-
 /**
  * Add User from admin panel,
  * Password reset link is sent through mail
@@ -16,45 +15,58 @@ module.exports.addUser = async function(userdata) {
         'usergroup'
     ],userdata);
 
-    userdata.password = Utils.hashPassword('password');
-    userdata.usergroup = userdata.usergroup || 'user';
-    userdata.ward = userdata.ward || null;
-    userdata.phone = userdata.phone || null;
+    let transaction;
+    try {
+        // Start a transaction.
+        transaction = await sequelize.transaction();
 
-    const user = await Users.create(userdata);
+        userdata.password = Utils.hashPassword('password');
+        userdata.usergroup = userdata.usergroup || 'user';
+        userdata.ward = userdata.ward || null;
+        userdata.phone = userdata.phone || null;
 
-    if(userdata.usergroup === 'storeowner' || userdata.usergroup === 'delivery' ) {
-        const store_id = userdata.store_id || 1;
-        await StoreOwners.create({
-            store_owner_id: user.user_id,
-            store_id,
-        });
-    }
+        const user = await Users.create(userdata, { transaction });
 
-    const OTP = Utils.generateOTP();
-
-    // clear all previous codes.
-    await Codes.destroy({
-        where: {
-            user_id: user.user_id
+        if(userdata.usergroup === 'storeowner' || userdata.usergroup === 'delivery' ) {
+            const store_id = userdata.store_id || 1;
+            await StoreOwners.create({
+                store_owner_id: user.user_id,
+                store_id,
+            }, { transaction });
         }
-    });
 
-    // store OTP in Database.
-    await Codes.create({
-        user_id: user.user_id,
-        code: OTP
-    });
+        const OTP = Utils.generateOTP();
 
-    const message = `<p>Hi, ${user.name || user.email}</p>` +
-    `<p>Your Peedika account was created. You can start using by ` +
-    `visiting the link <a href="http://daflow.co.in">daflow.co.in</a></p>` +
-    `<p>Your default password is 'password'. Please change it asap.</p>` +
-    `<p>You can change your password by visiting <a href="http://daflow.co.in/reset">daflow.co.in/reset</a></p>` +
-    `<p>Your OTP is <span style="font-size:20px;font-weight:bold;">${OTP}</span>.</p>` +
-    `<p>Code is valid for 10 minutes only. Please DO NOT share this with anyone.</p>`;
+        // clear all previous codes.
+        await Codes.destroy({
+            where: {
+                user_id: user.user_id
+            }
+        }, { transaction });
 
-    await Utils.sendMail(user.email, 'Account Generated for Peedika', message);
+        // store OTP in Database.
+        await Codes.create({
+            user_id: user.user_id,
+            code: OTP
+        }, { transaction });
+
+        const message = `<p>Hi, ${user.name || user.email}</p>` +
+        `<p>Your Peedika account was created. You can start using by ` +
+        `visiting the link <a href="http://daflow.co.in">daflow.co.in</a></p>` +
+        `<p>Your default password is 'password'. Please change it asap.</p>` +
+        `<p>You can change your password by visiting <a href="http://daflow.co.in/reset">daflow.co.in/reset</a></p>` +
+        `<p>Your OTP is <span style="font-size:20px;font-weight:bold;">${OTP}</span>.</p>` +
+        `<p>Code is valid for 10 minutes only. Please DO NOT share this with anyone.</p>`;
+
+        await Utils.sendMail(user.email, 'Account Generated for Peedika', message);
+    } catch (err) {
+        // If a transaction is started, Rollback
+        if( transaction ){
+            await transaction.rollback();
+        }
+
+        throw err;
+    }
 
     return user;
 };
