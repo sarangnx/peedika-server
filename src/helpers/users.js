@@ -60,6 +60,8 @@ module.exports.addUser = async function(userdata) {
         `<p>Code is valid for 10 minutes only. Please DO NOT share this with anyone.</p>`;
 
         await Utils.sendMail(user.email, 'Account Generated for Peedika', message);
+
+        return user;
     } catch (err) {
         // If a transaction is started, Rollback
         if( transaction ){
@@ -69,7 +71,6 @@ module.exports.addUser = async function(userdata) {
         throw err;
     }
 
-    return user;
 };
 
 /**
