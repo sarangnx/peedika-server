@@ -3,6 +3,7 @@ const Codes = require('../models').codes;
 const Localbodies = require('../models').localbodies;
 const StoreOwners = require('../models').store_owners;
 const Utils = require('./utils');
+const sequelize = require('../models').sequelize;
 
 /**
  * Add User from admin panel,
