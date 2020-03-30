@@ -61,7 +61,6 @@ const stocks = require('./routes/stocks');
 const users = require('./routes/users');
 const notifications = require('./routes/notifications');
 const offers = require('./routes/offers');
-const banners = require('./routes/banners');
 const localbodies = require('./routes/localbodies');
 
 /***
@@ -76,7 +75,6 @@ app.use('/api/stocks', stocks);
 app.use('/api/users', users);
 app.use('/api/notifications', notifications);
 app.use('/api/offers', offers);
-app.use('/api/banners', banners);
 app.use('/api/localbodies',localbodies);
 
 // catch 404 and forward to error handler
