@@ -268,7 +268,8 @@ const dashBoard = async (store_id) => {
             limit: 10,
             include: [{
                 model: Inventory,
-                as: 'item_details'
+                as: 'item_details',
+                required: true,
             }]
         });
 
