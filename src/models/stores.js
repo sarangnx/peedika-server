@@ -83,6 +83,11 @@ module.exports = (sequelize, DataTypes) =>{
             foreignKey: 'store_id',
             constraints: false
         });
+
+        stores.hasOne(models.localbodies, {
+            foreignKey: 'store_id',
+            as: 'localbody'
+        });
     };
     return stores;
 };
