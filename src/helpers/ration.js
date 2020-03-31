@@ -33,18 +33,15 @@ module.exports = {
                 include:[{
                     model: Localbodies,
                     as: 'localbody',
-                    ...(options.localbody && {
-                        where: {
-                            localbody_id: options.localbody,
-                        },
-                        required: true,
-                    }),
-                    ...(options.district && {
-                        where: {
+                    where: {
+                        ...(options.localbody && {
+                            localbody_id: parseInt(options.localbody),
+                        }),
+                        ...(options.district && {
                             district: options.district,
-                        },
-                        required: true,
-                    }),
+                        }),
+                    },
+                    ...((options.localbody || options.district) && { required: true }),
                 }],
                 where: {
                     ...(options.ward && { ward: options.ward }),
