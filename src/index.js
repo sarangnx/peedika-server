@@ -63,6 +63,7 @@ const notifications = require('./routes/notifications');
 const offers = require('./routes/offers');
 const localbodies = require('./routes/localbodies');
 const dashboard = require('./routes/dashboard');
+const ration = require('./routes/ration');
 
 /***
  *  ============ Register Routes ============
@@ -78,6 +79,7 @@ app.use('/api/notifications', notifications);
 app.use('/api/offers', offers);
 app.use('/api/localbodies',localbodies);
 app.use('/api/dashboard', dashboard);
+app.use('/api/ration', ration);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
