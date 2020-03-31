@@ -88,9 +88,25 @@ module.exports = {
      * Get list of districts
      */
     async listDistricts() {
-        const districts = await Localbodies.findAndCountAll({
-            attributes: [[sequelize.fn('DISTINCT', sequelize.col('district')), 'name']]
-        });
+        const districts = {
+            count: 14,
+            rows: [
+                { name: 'alappuzha' },
+                { name: 'ernakulam' },
+                { name: 'idukki' },
+                { name: 'kannur' },
+                { name: 'kasaragod' },
+                { name: 'kollam' },
+                { name: 'kottayam' },
+                { name: 'kozhikode' },
+                { name: 'malappuram' },
+                { name: 'palakkad' },
+                { name: 'pathanamthitta' },
+                { name: 'thiruvananthapuram' },
+                { name: 'thrissur' },
+                { name: 'wayanad' },
+            ],
+        };
 
         return districts;
     }
