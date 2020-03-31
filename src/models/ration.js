@@ -46,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 'kg'
         },
+        color: {
+            type: DataTypes.STRING(20),
+            allowNull: true,
+        },
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: sequelize.fn('NOW'),

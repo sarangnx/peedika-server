@@ -49,6 +49,10 @@ module.exports = {
                 allowNull: false,
                 defaultValue: 'kg'
             },
+            color: {
+                type: Sequelize.STRING(20),
+                allowNull: true,
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE,
