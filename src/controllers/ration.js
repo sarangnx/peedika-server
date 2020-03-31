@@ -16,5 +16,32 @@ module.exports = {
         } catch (err) {
             next(err);
         }
+    },
+
+    /**
+     * List Rations
+     */
+    async listEntries(data, req, res, next) {
+        try {
+            const options = req.query;
+
+            if(options.page) {
+                options.per_page = options.per_page || 10;
+                options.offset = ( parseInt(options.page) - 1 ) * parseInt(options.per_page);
+            }
+
+            if(options.per_page) {
+                options.limit = parseInt(options.per_page);
+            }
+
+            const rations = await Ration.listEntries(options);
+
+            res.json({
+                status: 'success',
+                rations,
+            });
+        } catch (err) {
+            next(err);
+        }
     }
 };

@@ -9,4 +9,7 @@ const router = express.Router();
 // Create new entry for ration.
 router.post('/new', jwtAuth, Ration.createEntry);
 
+// List entries
+router.post('/list', jwtAuth, Ration.listEntries);
+
 module.exports = router;
