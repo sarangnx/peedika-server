@@ -125,6 +125,11 @@ module.exports = (sequelize, DataTypes) => {
             constraints: false,
             as: 'localbody'
         });
+
+        users.hasOne(models.ration, {
+            foreignKey: 'user_id',
+            as: 'ration'
+        });
     };
     return users;
 };

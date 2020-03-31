@@ -46,7 +46,7 @@ module.exports = {
                     'l',
                     'count'
                 ],
-                allowNull: false,
+                allowNull: true,
                 defaultValue: 'kg'
             },
             color: {

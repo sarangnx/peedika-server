@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
                 'l',
                 'count'
             ],
-            allowNull: false,
+            allowNull: true,
             defaultValue: 'kg'
         },
         color: {
@@ -63,6 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     ration.associate = function(models) {
         ration.belongsTo(models.users, {
             foreignKey: 'user_id',
+            as: 'user'
         });
     };
     return ration;
