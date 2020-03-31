@@ -14,4 +14,7 @@ router.get('/localbody/:localbody_id', Localbodies.getLocalbodyById);
 // List localbodies
 router.get('/list', Localbodies.listLocalbodies);
 
+// list districts
+router.get('/districts', Localbodies.listDistricts);
+
 module.exports = router;

@@ -61,4 +61,17 @@ module.exports = {
             next(err);
         }
     },
+
+    async listDistricts(req, res, next) {
+        try {
+            const districts = await Localbodies.listDistricts();
+
+            res.json({
+                status: 'success',
+                districts,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }

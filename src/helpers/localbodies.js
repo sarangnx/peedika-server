@@ -1,5 +1,6 @@
 const Localbodies = require('../models').localbodies;
 const Utils = require('./utils');
+const sequelize = require('../models').sequelize;
 
 module.exports = {
 
@@ -81,6 +82,17 @@ module.exports = {
         });
 
         return localbodies;
+    },
+
+    /**
+     * Get list of districts
+     */
+    async listDistricts() {
+        const districts = await Localbodies.findAndCountAll({
+            attributes: [[sequelize.fn('DISTINCT', sequelize.col('district')), 'name']]
+        });
+
+        return districts;
     }
 };
 
