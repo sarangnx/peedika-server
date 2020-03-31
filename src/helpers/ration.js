@@ -39,6 +39,12 @@ module.exports = {
                         },
                         required: true,
                     }),
+                    ...(options.district && {
+                        where: {
+                            district: options.district,
+                        },
+                        required: true,
+                    }),
                 }]
             }],
             ...(options.offset && { offset: options.offset }),
