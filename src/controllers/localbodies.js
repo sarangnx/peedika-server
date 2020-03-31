@@ -48,7 +48,7 @@ module.exports = {
             }
 
             if(options.per_page) {
-                options.limit = options.per_page;
+                options.limit = parseInt(options.per_page);
             }
 
             const localbodies = await Localbodies.listLocalbodies(options);
