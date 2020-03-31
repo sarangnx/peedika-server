@@ -1,5 +1,7 @@
 const Localbodies = require('../models').localbodies;
+const Stores = require('../models').stores;
 const Utils = require('./utils');
+const ServerError = require('./ServerError');
 const sequelize = require('../models').sequelize;
 
 module.exports = {
@@ -109,6 +111,56 @@ module.exports = {
         };
 
         return districts;
+    },
+
+    /**
+     * Add a store after creating a localbody.
+     * @param {Object} userdata - Userdata
+     */
+    async addStore(userdata) {
+        let transaction;
+
+        try{
+            // Start a transaction.
+            transaction = await sequelize.transaction();
+
+            Utils.required([
+                'localbody_id'
+            ], userdata);
+
+            const localbody = await Localbodies.findOne({
+                where: {
+                    localbody_id: userdata.localbody_id,
+                }
+            });
+
+            if(localbody.store_id) {
+                throw new ServerError('Already Set', 400);
+            }
+
+            userdata.name = localbody.name;
+            userdata.district = localbody.district;
+            userdata.state = localbody.state;
+
+            userdata.opening_time = '09:00:00';
+            userdata.closing_time = '18:00:00';
+
+            const store = await Stores.create(userdata, { transaction });
+
+            await localbody.set('store_id', store.store_id);
+            await localbody.save({ transaction });
+
+            await transaction.commit();
+
+            return store;
+        } catch(err) {
+            // If a transaction is started, Rollback
+            if( transaction ){
+                await transaction.rollback();
+            }
+
+            throw err;
+        }
     }
 };
 

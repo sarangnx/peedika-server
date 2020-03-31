@@ -17,4 +17,7 @@ router.get('/list', Localbodies.listLocalbodies);
 // list districts
 router.get('/districts', Localbodies.listDistricts);
 
+// add store
+router.post('/store/add', jwtAuth, Localbodies.addStore);
+
 module.exports = router;
