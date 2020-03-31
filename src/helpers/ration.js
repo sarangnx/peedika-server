@@ -33,9 +33,9 @@ module.exports = {
                 include:[{
                     model: Localbodies,
                     as: 'localbody',
-                    ...(options.localbody_id && {
+                    ...(options.localbody && {
                         where: {
-                            localbody_id: options.localbody_id,
+                            localbody_id: options.localbody,
                         },
                         required: true,
                     }),
@@ -45,7 +45,10 @@ module.exports = {
                         },
                         required: true,
                     }),
-                }]
+                }],
+                where: {
+                    ...(options.ward && { ward: options.ward }),
+                },
             }],
             ...(options.offset && { offset: options.offset }),
             ...(options.limit && { limit: options.limit }),
