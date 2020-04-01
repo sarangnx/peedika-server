@@ -98,7 +98,14 @@ const getUserProfile = async (user_id) => {
             },
             include: [{
                 model: Localbodies,
-                as: 'localbody'
+                as: 'localbody',
+                attributes: {
+                    exclude: [
+                        'createdAt',
+                        'updatedAt',
+                        'deletedAt',
+                    ]
+                }
             }],
             attributes: {
                 exclude: [
@@ -211,10 +218,27 @@ const getUserProfiles = async (offset, limit, usergroup = null) => {
         const users = await Users.findAndCountAll({
             include: [{
                 model: Localbodies,
-                as: 'localbody'
+                as: 'localbody',
+                attributes: {
+                    exclude: [
+                        'createdAt',
+                        'updatedAt',
+                        'deletedAt',
+                    ]
+                }
             }, {
                 model: Stores,
-                as: 'store'
+                as: 'store',
+                attributes: {
+                    exclude: [
+                        'opening_time',
+                        'closing_time',
+                        'createdAt',
+                        'updatedAt',
+                        'deletedAt',
+                    ]
+                },
+                through: { attributes: [] } // don't show junction table
             }],
             attributes: {
                 exclude: [
