@@ -309,41 +309,22 @@ module.exports.status = status;
 const viewOrder = async ({ order_id, user_id, store_id, order_status, order_by, offset, limit, district, localbody_id, ward }) => {
 
     try {
-
-        let where, sort;
-
-        // select any one of the three arguments.
-        if( order_id ){
-            where = {
-                order_id
-            };
-        } else if ( user_id ) {
-            where = {
-                user_id
-            };
-        } else if ( store_id ) {
-            where = {
-                store_id
-            }
-        } else {
-            throw new Error('Atleat one argument required.');
-        }
-
-        // Add order status if given.
-        if( order_status ){
-            where = Object.assign({}, where, {
-                order_status
-            });
-        }
+        // prepare where clause
+        const where = {
+            ...(order_id && { order_id }),
+            ...(user_id && { user_id }),
+            ...(store_id && { store_id }),
+            ...(order_status && { order_status })
+        };
 
         // Set sort order. default: DESC
-        if( order_by ){
-            sort = {
+        const sort = {
+            ...(order_by && {
                 order: [
                     ['order_date', order_by]
                 ]
-            }
-        }
+            }),
+        };
 
         // Find the orders based on the criteria provided
         // by 'where' option.
@@ -546,13 +527,8 @@ module.exports.changeStatus = changeStatus;
 const getStats = async(store_id) => {
 
     try{
-
-        if( !store_id ){
-            throw new Error('Store ID required.');
-        }
-
         const where = {
-            store_id
+            ...(store_id && { store_id }),
         };
 
         /***
