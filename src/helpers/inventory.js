@@ -542,12 +542,14 @@ const getItemsByCategory = async ({ category_id, offset, limit, recursive, store
                 as: 'category',
                 where: {
                     category_id: category_ids,
-                    ...(store_id && { store_id }),
                 },
                 required: true,
                 through: { attributes: [] }, // don't show junction table
                 attributes: [], // exclude attributes from include
             }],
+            where: {
+                ...(store_id && { store_id }),
+            },
             attributes: {
                 exclude: [
                     'createdAt',
@@ -566,12 +568,14 @@ const getItemsByCategory = async ({ category_id, offset, limit, recursive, store
                 as: 'category',
                 where: {
                     category_id: category_ids,
-                    ...(store_id && { store_id }),
                 },
                 required: true,
                 through: { attributes: [] }, // don't show junction table
                 attributes: [], // exclude attributes from include
             }],
+            where: {
+                ...(store_id && { store_id }),
+            }
         });
 
         return {
