@@ -23,4 +23,7 @@ router.patch('/profile/address', jwtAuth, Users.editUserAddress);
 // Get all profiles
 router.get('/profiles', jwtAuth, Users.getUserProfiles);
 
+// add user to store
+router.post('/store/add', jwtAuth, Users.addStore);
+
 module.exports = router;
