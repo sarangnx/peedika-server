@@ -34,7 +34,7 @@ const send = async (data) => {
 
     data.topic = data.topic || 'announcements';
 
-    await fcm.sendToTopic(daata.topic, payload);
+    await fcm.sendToTopic(data.topic, payload);
 }
 
 module.exports.send = send;
