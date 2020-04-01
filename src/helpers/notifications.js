@@ -11,10 +11,11 @@ const fcm = admin.messaging();
 
 /**
  * Send notifications to topic 'announcements'
- * 
+ *
  * @param {String} data.notif_title - Notification Title.
  * @param {String} data.notif_body - Notification Body.
  * @param {Number} data.offer_id - Offer ID for creating offer link.
+ * @param {String} data.topic - subscribed topic
  */
 const send = async (data) => {
 
@@ -25,9 +26,15 @@ const send = async (data) => {
             body: data.notif_body,
             click_action: 'FLUTTER_NOTIFICATION_CLICK'
         },
+        data: {
+            title: data.notif_title,
+            body: data.notif_body,
+        }
     };
-  
-    await fcm.sendToTopic('announcements', payload);
+
+    data.topic = data.topic || 'announcements';
+
+    await fcm.sendToTopic(daata.topic, payload);
 }
 
 module.exports.send = send;
