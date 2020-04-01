@@ -122,8 +122,9 @@ const getUserProfiles = async (data, req, res, next) => {
 
         const offset = ( page - 1 ) * per_page;
         const usergroup = req.query.usergroup || null;
+        const localbody_id = req.query.localbody_id || null;
 
-        const result = await Users.getUserProfiles(offset, per_page, usergroup);
+        const result = await Users.getUserProfiles(offset, per_page, usergroup, localbody_id);
 
         // combine result with extra properties.
         Object.assign(result, {

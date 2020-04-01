@@ -213,7 +213,7 @@ module.exports.editUserAddress = editUserAddress;
  * @param {Number} offset - Page Number.
  * @param {Number} limit - Number of items Per page.
  */
-const getUserProfiles = async (offset, limit, usergroup = null) => {
+const getUserProfiles = async (offset, limit, usergroup = null, localbody_id) => {
     try {
         const users = await Users.findAndCountAll({
             include: [{
@@ -225,7 +225,13 @@ const getUserProfiles = async (offset, limit, usergroup = null) => {
                         'updatedAt',
                         'deletedAt',
                     ]
-                }
+                },
+                ...(localbody_id && {
+                    where: {
+                        localbody_id,
+                    },
+                    required: true,
+                }),
             }, {
                 model: Stores,
                 as: 'store',
