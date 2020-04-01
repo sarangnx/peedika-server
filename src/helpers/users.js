@@ -37,6 +37,9 @@ module.exports.addUser = async function (userdata) {
             });
 
             const store_id = localbody.store_id || null;
+            if(!store_id) {
+                throw new Error('Add Localbody before trying again.');
+            }
             await StoreOwners.create({
                 store_owner_id: user.user_id,
                 store_id,
