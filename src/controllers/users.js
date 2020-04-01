@@ -142,3 +142,22 @@ const getUserProfiles = async (data, req, res, next) => {
 }
 
 module.exports.getUserProfiles = getUserProfiles;
+
+
+/**
+ * Add user to store
+ */
+module.exports.addStore = async function(data, req, res, next) {
+    try {
+        const userdata = req.body;
+
+        await Users.addStore(userdata);
+
+        res.json({
+            status: 'success',
+            message: 'User added to Store',
+        });
+    } catch (err) {
+        next(err);
+    }
+}

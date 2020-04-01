@@ -456,7 +456,7 @@ module.exports.getBrands = getBrands;
  * @param {Number} options.offset - The row from which find is to be started.
  * @param {Number} options.limit - Number of rows to be returned.
  */
-const searchItems = async ({ search, offset, limit }) => {
+const searchItems = async ({ search, offset, limit, store_id }) => {
     try {
         // Match item_name in Inventory.
         const items = await Inventory.findAndCountAll({
@@ -465,7 +465,8 @@ const searchItems = async ({ search, offset, limit }) => {
             where: {
                 item_name: {
                     [Op.substring]: search
-                }
+                },
+                ...(store_id && { store_id }),
             },
         });
 
@@ -489,7 +490,7 @@ module.exports.searchItems = searchItems;
  * @param {Number} data.offset - The row from which find is to be started.
  * @param {Number} data.limit - Number of rows to be returned.
  */
-const getItemsByCategory = async ({ category_id, offset, limit, recursive }) => {
+const getItemsByCategory = async ({ category_id, offset, limit, recursive, store_id }) => {
     try {
         if(!category_id) {
             throw new Error('Category ID Required.');
@@ -541,6 +542,7 @@ const getItemsByCategory = async ({ category_id, offset, limit, recursive }) => 
                 as: 'category',
                 where: {
                     category_id: category_ids,
+                    ...(store_id && { store_id }),
                 },
                 required: true,
                 through: { attributes: [] }, // don't show junction table
@@ -563,7 +565,8 @@ const getItemsByCategory = async ({ category_id, offset, limit, recursive }) => 
                 model: Category,
                 as: 'category',
                 where: {
-                    category_id
+                    category_id: category_ids,
+                    ...(store_id && { store_id }),
                 },
                 required: true,
                 through: { attributes: [] }, // don't show junction table
@@ -590,7 +593,7 @@ module.exports.getItemsByCategory = getItemsByCategory;
  * @param {Number} data.offset - The row from which find is to be started.
  * @param {Number} data.limit - Number of rows to be returned.
  */
-const getAllItems = async ({ offset, limit, random }) => {
+const getAllItems = async ({ offset, limit, random, store_id }) => {
     try {
         const order = random ? {
             order: [
@@ -609,10 +612,21 @@ const getAllItems = async ({ offset, limit, random }) => {
             },
             offset,
             limit,
-            ...order
+            ...order,
+            ...(store_id && {
+                where: {
+                    store_id,
+                },
+            }),
         });
 
-        let count = await Inventory.count();
+        let count = await Inventory.count({
+            ...(store_id && {
+                where: {
+                    store_id,
+                },
+            }),
+        });
 
         return {
             items: items,

@@ -66,6 +66,10 @@ module.exports = (sequelize, DataTypes) =>{
             defaultValue: true,
             allowNull: true
         },
+        store_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: sequelize.fn('NOW'),
@@ -79,8 +83,12 @@ module.exports = (sequelize, DataTypes) =>{
     localbodies.associate = function(models) {
         localbodies.hasMany(models.users, {
             foreignKey: 'user_id',
-            constraints: false,
             as: 'users'
+        });
+
+        localbodies.belongsTo(models.stores, {
+            foreignKey: 'store_id',
+            as: 'store'
         });
     };
     return localbodies;

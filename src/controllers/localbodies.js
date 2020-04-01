@@ -73,5 +73,23 @@ module.exports = {
         } catch (err) {
             next(err);
         }
+    },
+
+    /**
+     * Add store after creating localbody
+     */
+    async addStore(data, req, res, next) {
+        try {
+            const userdata = req.body;
+
+            await Localbodies.addStore(userdata);
+
+            res.json({
+                status: 'success',
+                message: 'Store added.'
+            });
+        } catch (err) {
+            next(err);
+        }
     }
 }
