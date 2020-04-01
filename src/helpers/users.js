@@ -1,6 +1,7 @@
 const Users = require('../models').users;
 const Codes = require('../models').codes;
 const Localbodies = require('../models').localbodies;
+const Stores = require('../models').stores;
 const StoreOwners = require('../models').store_owners;
 const Utils = require('./utils');
 const sequelize = require('../models').sequelize;
@@ -29,7 +30,13 @@ module.exports.addUser = async function(userdata) {
         const user = await Users.create(userdata, { transaction });
 
         if(userdata.usergroup === 'storeowner' || userdata.usergroup === 'delivery' ) {
-            const store_id = userdata.store_id || 1;
+            const localbody = await Localbodies.findOne({
+                where: {
+                    localbody_id: userdata.localbody_id,
+                },
+            });
+
+            const store_id = localbody.store_id || null;
             await StoreOwners.create({
                 store_owner_id: user.user_id,
                 store_id,
@@ -202,11 +209,13 @@ const getUserProfiles = async (offset, limit, usergroup = null) => {
             include: [{
                 model: Localbodies,
                 as: 'localbody'
+            }, {
+                model: Stores,
+                as: 'store'
             }],
             attributes: {
                 exclude: [
                     'roles',
-                    'usergroup',
                     'password',
                     'createdAt',
                     'updatedAt',
