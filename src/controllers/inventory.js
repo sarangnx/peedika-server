@@ -147,7 +147,8 @@ const search = async (req, res, next) => {
         const options = {
             search: req.query.search ? req.query.search : null,
             offset,
-            limit: per_page
+            limit: per_page,
+            store_id: req.query.store_id,
         };
 
         let result = await Inventory.searchItems(options);
@@ -312,6 +313,7 @@ const getItemsByCategory = async (req, res, next) => {
             offset,
             limit: per_page,
             recursive: req.query.recursive === 'true' ? true : false,
+            store_id: req.query.store_id,
         };
 
         let result = await Inventory.getItemsByCategory(options);
@@ -353,7 +355,8 @@ const getAllItems = async (req, res, next) => {
         // Object to be passed to getAllItems helper.
         const options = {
             offset,
-            limit: per_page
+            limit: per_page,
+            store_id: req.query.store_id,
         };
 
         let result = await Inventory.getAllItems(options);
@@ -463,7 +466,8 @@ const getRandomItems = async (req, res, next) => {
         const options = {
             offset,
             limit: per_page,
-            random: true
+            random: true,
+            store_id: req.query.store_id,
         };
 
         const result = await Inventory.getAllItems(options);
