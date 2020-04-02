@@ -235,14 +235,9 @@ module.exports.getStoreList = getStoreList;
 const dashBoard = async (store_id) => {
 
     try {
-
-        if (!store_id) {
-            throw new Error('Store ID required.');
-        }
-
         const total_orders = await Orders.count({
             where: {
-                store_id,
+                ...(store_id && { store_id })
             },
         });
 
