@@ -26,4 +26,7 @@ router.get('/profiles', jwtAuth, Users.getUserProfiles);
 // add user to store
 router.post('/store/add', jwtAuth, Users.addStore);
 
+// get stats for admin dashboard
+router.get('/stats', jwtAuth, Users.stats);
+
 module.exports = router;

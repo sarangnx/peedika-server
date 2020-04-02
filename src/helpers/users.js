@@ -5,6 +5,7 @@ const Stores = require('../models').stores;
 const StoreOwners = require('../models').store_owners;
 const Utils = require('./utils');
 const sequelize = require('../models').sequelize;
+const Sequelize = require('../models').Sequelize;
 
 /**
  * Add User from admin panel,
@@ -320,4 +321,81 @@ module.exports.addStore = async function (userdata) {
 
         throw err;
     }
+}
+
+module.exports.stats = async function() {
+    const user = await Localbodies.findAll({
+        attributes: [
+            'localbody_id',
+            [Sequelize.fn('COUNT', Sequelize.col('users.user_id')), 'count']
+        ],
+        group: ['localbody_id'],
+        include: [{
+            model: Users,
+            as: 'users',
+            attributes: [],
+            where: {
+                usergroup: 'user'
+            },
+            required: false,
+        }]
+    });
+
+    const manager = await Localbodies.findAll({
+        attributes: [
+            'localbody_id',
+            [Sequelize.fn('COUNT', Sequelize.col('users.user_id')), 'count']
+        ],
+        group: ['localbody_id'],
+        include: [{
+            model: Users,
+            as: 'users',
+            attributes: [],
+            where: {
+                usergroup: 'manager'
+            },
+            required: false,
+        }]
+    });
+
+    const delivery = await Localbodies.findAll({
+        attributes: [
+            'localbody_id',
+            [Sequelize.fn('COUNT', Sequelize.col('users.user_id')), 'count']
+        ],
+        group: ['localbody_id'],
+        include: [{
+            model: Users,
+            as: 'users',
+            attributes: [],
+            where: {
+                usergroup: 'delivery'
+            },
+            required: false,
+        }]
+    });
+
+    const localbodies = await Localbodies.findAll({
+        attributes: {
+            exclude: [
+                'available_wards',
+                'code',
+                'createdAt',
+                'deletedAt',
+                'email',
+                'emergency_phone',
+                'kitchen_phone',
+                'phone',
+                'status',
+                'updatedAt',
+            ]
+        },
+    });
+
+    return {
+        user, 
+        manager,
+        delivery,
+        localbodies
+    };
 }

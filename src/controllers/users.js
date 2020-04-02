@@ -162,3 +162,16 @@ module.exports.addStore = async function(data, req, res, next) {
         next(err);
     }
 }
+
+module.exports.stats = async function(data, req, res, next) {
+    try {
+        const stats = await Users.stats();
+
+        res.json({
+            status: 'success',
+            stats,
+        });
+    } catch(err) {
+        next(err);
+    }
+}
