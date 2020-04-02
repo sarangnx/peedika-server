@@ -82,7 +82,7 @@ module.exports = (sequelize, DataTypes) =>{
 
     localbodies.associate = function(models) {
         localbodies.hasMany(models.users, {
-            foreignKey: 'user_id',
+            foreignKey: 'localbody_id',
             as: 'users'
         });
 
