@@ -352,7 +352,7 @@ module.exports.stats = async function() {
             as: 'users',
             attributes: [],
             where: {
-                usergroup: 'manager'
+                usergroup: 'storeowner'
             },
             required: false,
         }]
