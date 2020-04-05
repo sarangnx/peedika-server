@@ -8,6 +8,8 @@ const router = express.Router();
 // add localbody
 router.post('/add', jwtAuth, Localbodies.createLocalbody);
 
+router.patch('/localbody', jwtAuth, Localbodies.editLocalbody);
+
 // get localbody by id
 router.get('/localbody/:localbody_id', Localbodies.getLocalbodyById);
 

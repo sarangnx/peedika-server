@@ -21,6 +21,24 @@ module.exports = {
     },
 
     /**
+     * Edit localbody
+     */
+    async editLocalbody(data, req, res, next) {
+        try {
+            const localbody = req.body;
+
+            await Localbodies.editLocalbody(localbody);
+
+            res.json({
+                status: 'success',
+                message: 'Localbody updated.'
+            });
+        } catch(err) {
+            next(err);
+        }
+    },
+
+    /**
      * Get full details of a localbody.
      */
     async getLocalbodyById(req, res, next) {

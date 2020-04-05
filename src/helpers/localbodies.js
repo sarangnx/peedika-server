@@ -45,6 +45,59 @@ module.exports = {
     },
 
     /**
+     * Edit localbody
+     *
+     * @param {Object} data - Localbody data
+     * @param {Number} localbody_id - Localbody ID
+     * @param {String} name - Localbody Name
+     * @param {String} code - Localbody Code
+     * @param {String} district - District
+     * @param {String} state - State
+     * @param {Number} total_wards - Total number of wards
+     * @param {Array} available_wards - List of available wards.
+     * @param {String} type - type of localbody
+     * @param {String} phone - General phone
+     * @param {String} emergency_phone - Emergency number
+     * @param {String} kitchen_phone - kitchen phone
+     * @param {String} email - Email
+     * @param {Boolean} status - status of localbody
+     */
+    async editLocalbody(data) {
+        Utils.required([
+            'localbody_id',
+        ], data);
+
+        if(data.state) {
+            data.state = data.state.toLowerCase();
+        }
+
+        if(data.district) {
+            data.district = data.district.toLowerCase();
+        }
+
+        if(data.type) {
+            data.type = data.type.toLowerCase();
+        }
+
+        await Localbodies.update(data, {
+            where: {
+                localbody_id: data.localbody_id,
+            },
+            fields: [
+                'name',
+                'district',
+                'state',
+                'type',
+                'total_wards',
+                'email',
+                'phone',
+                'emergency_phone',
+                'kitchen_phone'
+            ]
+        });
+    },
+
+    /**
      * Get full details of a localbody.
      * @param {Number} localbody_id - Localbody Id
      */
